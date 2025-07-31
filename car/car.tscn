@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://c63ijka05dwmn"]
+[gd_scene load_steps=7 format=3 uid="uid://c63ijka05dwmn"]
 
 [ext_resource type="Script" uid="uid://cxlgahfmexswj" path="res://car/car.gd" id="1_dxy33"]
 [ext_resource type="Texture2D" uid="uid://bvklkkqa5gpq1" path="res://car/car_blue_3.png" id="2_hkabp"]
@@ -7,6 +7,9 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jpe8o"]
 size = Vector2(60, 116)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h3fet"]
+size = Vector2(20, 10)
 
 [node name="Car" type="CharacterBody2D"]
 script = ExtResource("1_dxy33")
@@ -29,5 +32,37 @@ stream = ExtResource("4_h3fet")
 [node name="TurnSoundDelay" type="Timer" parent="."]
 wait_time = 0.2
 one_shot = true
+
+[node name="Tire1" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tire1"]
+position = Vector2(40, -24)
+shape = SubResource("RectangleShape2D_h3fet")
+
+[node name="Tire2" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Tire2"]
+position = Vector2(40, 24)
+shape = SubResource("RectangleShape2D_h3fet")
+
+[node name="Tire3" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Tire3"]
+position = Vector2(-32, 24)
+shape = SubResource("RectangleShape2D_h3fet")
+
+[node name="Tire4" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="Tire4"]
+position = Vector2(-32, -24)
+shape = SubResource("RectangleShape2D_h3fet")
 
 [connection signal="timeout" from="TurnSoundDelay" to="." method="_on_turn_sound_delay_timeout"]

@@ -34,6 +34,11 @@ ui_right={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="Layer 1"
+2d_physics/layer_2="Track"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
