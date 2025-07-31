@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=8 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
 [ext_resource type="PackedScene" uid="uid://47aacx1x23h0" path="res://Tracks/basic_track.tscn" id="2_53jny"]
 [ext_resource type="AudioStream" uid="uid://1rjoaov6w52v" path="res://mainGame/Dial.wav" id="3_53jny"]
 [ext_resource type="AudioStream" uid="uid://yf0m51d1kspe" path="res://mainGame/DialGo.wav" id="4_1nfcf"]
+[ext_resource type="AudioStream" uid="uid://c702salwdox34" path="res://mainGame/Ready.wav" id="6_53jny"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_feb5d"]
 font_size = 64
@@ -18,8 +19,6 @@ position = Vector2(-2533, 341)
 [node name="Car" parent="." instance=ExtResource("2_38t2v")]
 position = Vector2(739, 431)
 rotation = -1.5708
-go = false
-speed = 500.0
 
 [node name="Camera2D" type="Camera2D" parent="Car"]
 position = Vector2(300, 0)
@@ -60,4 +59,11 @@ stream = ExtResource("3_53jny")
 [node name="GoSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_1nfcf")
 
+[node name="ReadySound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_53jny")
+
+[node name="SpawnGhostTimer" type="Timer" parent="."]
+wait_time = 2.0
+
 [connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
+[connection signal="timeout" from="SpawnGhostTimer" to="." method="_on_spawn_ghost_timer_timeout"]

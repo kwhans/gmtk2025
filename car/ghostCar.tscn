@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://c3wtk8cpx2kih"]
+
+[ext_resource type="Script" uid="uid://ijb68qtwj6a1" path="res://car/ghostCar.gd" id="1_h437j"]
+[ext_resource type="Texture2D" uid="uid://btc4sknqv5he7" path="res://car/car_black_3.png" id="2_h437j"]
+[ext_resource type="AudioStream" uid="uid://4pbv5fhsv37m" path="res://car/drive.wav" id="3_85xei"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jpe8o"]
+size = Vector2(60, 116)
+
+[node name="GhostCar" type="CharacterBody2D"]
+script = ExtResource("1_h437j")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 1.5708
+texture = ExtResource("2_h437j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, -1)
+rotation = 1.5708
+shape = SubResource("RectangleShape2D_jpe8o")
+
+[node name="DriveSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_85xei")
+autoplay = true
