@@ -5,10 +5,12 @@ extends CharacterBody2D
 @export var steerSpeedRps:float = 3.0;
 @export var speed:float = 250.0; # pixels per second
 @export var offRoadResist:float = 0.1
-
 signal waypointSignal
 
-var steerIntent:float = 0.0 # used for outputing to waypoints
+# used for outputing to waypoints
+var steerIntent:float = 0.0 
+@onready var netSpeed:float = speed
+
 func _ready() -> void:
 	pass
 	
@@ -52,7 +54,11 @@ func _physics_process(delta: float) -> void:
 	if $Tire4.has_overlapping_bodies() == false:
 		tiresOnTrack -= offRoadResist
 	
-	velocity = Vector2.RIGHT.rotated(rotation) * speed * tiresOnTrack
+	var effectiveSpeed = speed * tiresOnTrack
+	if effectiveSpeed != netSpeed:
+		inputChanged = true
+		
+	velocity = Vector2.RIGHT.rotated(rotation) * effectiveSpeed
 	
 	move_and_slide()
 	

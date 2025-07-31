@@ -42,7 +42,7 @@ func recordWaypoint() -> void:
 	newWaypoint.rotation = $Car.rotation
 	newWaypoint.velocity = $Car.velocity
 	newWaypoint.steerIntent = $Car.steerIntent
-	newWaypoint.speed = $Car.speed
+	newWaypoint.speed = $Car.netSpeed
 	
 	carHistory.append(newWaypoint)
 	#print("Added waypoint ", carHistory.size())
