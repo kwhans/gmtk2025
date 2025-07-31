@@ -6,16 +6,22 @@ extends CharacterBody2D
 
 func _physics_process(delta: float) -> void:
 	if not go:
+		$DriveSound.playing = false
 		return
-	
-	var netSteer:float = 0.0
+	if $DriveSound.playing == false:
+		$DriveSound.play()
+		
+	var steerInput:float = 0.0
 		
 	if Input.is_action_pressed("ui_left"):
-		netSteer -= steerSpeedRps * delta;
+		steerInput -= steerSpeedRps;
 	if Input.is_action_pressed("ui_right"):
-		netSteer += steerSpeedRps * delta;
+		steerInput += steerSpeedRps;
 		
-	rotate(netSteer)
+	rotate(steerInput*delta)
+	
+	if(abs(steerInput) > 1.0 and $TurnSound.playing == false):
+		$TurnSound.play()
 	
 	velocity = Vector2.RIGHT.rotated(rotation) * speed
 	
