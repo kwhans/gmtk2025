@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3 uid="uid://jkq2n2xu6tq"]
+
+[ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
+[ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
+[ext_resource type="AudioStream" uid="uid://1rjoaov6w52v" path="res://mainGame/Dial.wav" id="3_53jny"]
+[ext_resource type="AudioStream" uid="uid://yf0m51d1kspe" path="res://mainGame/DialGo.wav" id="4_1nfcf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_feb5d"]
+font_size = 48
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_o6bt6")
+
+[node name="Car" parent="." instance=ExtResource("2_38t2v")]
+position = Vector2(739, 431)
+rotation = -1.5708
+go = false
+
+[node name="StartCountDownTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 1150.0
+offset_bottom = 644.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="NarrationLabel" type="Label" parent="CenterContainer"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_feb5d")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CountSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_53jny")
+
+[node name="GoSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_1nfcf")
+
+[connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
