@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=7 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
+[ext_resource type="PackedScene" uid="uid://47aacx1x23h0" path="res://Tracks/basic_track.tscn" id="2_53jny"]
 [ext_resource type="AudioStream" uid="uid://1rjoaov6w52v" path="res://mainGame/Dial.wav" id="3_53jny"]
 [ext_resource type="AudioStream" uid="uid://yf0m51d1kspe" path="res://mainGame/DialGo.wav" id="4_1nfcf"]
 
@@ -11,13 +12,19 @@ font_size = 48
 [node name="Game" type="Node2D"]
 script = ExtResource("1_o6bt6")
 
+[node name="BasicTrack" parent="." instance=ExtResource("2_53jny")]
+position = Vector2(-2533, 341)
+
 [node name="Car" parent="." instance=ExtResource("2_38t2v")]
 position = Vector2(739, 431)
 rotation = -1.5708
 go = false
+speed = 500.0
 
-[node name="StartCountDownTimer" type="Timer" parent="."]
-autostart = true
+[node name="Camera2D" type="Camera2D" parent="Car"]
+rotation = 1.5708
+ignore_rotation = false
+rotation_smoothing_enabled = true
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchors_preset = 8
@@ -39,6 +46,9 @@ layout_mode = 2
 label_settings = SubResource("LabelSettings_feb5d")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="StartCountDownTimer" type="Timer" parent="."]
+autostart = true
 
 [node name="CountSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_53jny")
