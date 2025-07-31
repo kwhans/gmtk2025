@@ -7,6 +7,8 @@ var carHistory:Array[Waypoint] = []
 var millisAtStart:int = 0;
 var carStartPos:Vector2 = Vector2.ZERO
 var ghostCarScene = preload("res://car/ghostCar.tscn")
+var oilSpillScene = preload("res://obstacles/OilSpill.tscn")
+@export var spawnSafetyRadius:float = 600
 
 func _ready() -> void:
 	$Car.waypointSignal.connect(recordWaypoint)
@@ -58,3 +60,18 @@ func spawnGhostCar() -> void:
 
 func _on_spawn_ghost_timer_timeout() -> void:
 	spawnGhostCar()
+
+
+func _on_oil_timer_timeout() -> void:
+	var tiles:Array[Vector2i] = $BasicTrack.getTrackTiles()
+	var newOil:OilSpill = oilSpillScene.instantiate()
+	var targetPosition:Vector2
+	var goodTarget:bool = false
+	while !goodTarget: #keep the oil from spawning right in front of the car
+		var randomTile = tiles.pick_random()
+		targetPosition = (randomTile * 128.0) + Vector2(randf_range(0,128),randf_range(0,128)) - $BasicTrack.position
+		goodTarget = targetPosition.distance_to($Car.position) > spawnSafetyRadius
+		#print_debug("recalculated position")
+	newOil.position = targetPosition
+	newOil.rotation = randf_range(0, TAU)
+	$BasicTrack.add_child(newOil)

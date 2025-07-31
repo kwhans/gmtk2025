@@ -14,11 +14,9 @@ font_size = 64
 script = ExtResource("1_o6bt6")
 
 [node name="BasicTrack" parent="." instance=ExtResource("2_53jny")]
-position = Vector2(-2533, 341)
 
 [node name="Car" parent="." instance=ExtResource("2_38t2v")]
-position = Vector2(739, 431)
-rotation = -1.5708
+position = Vector2(1337, 831)
 
 [node name="Camera2D" type="Camera2D" parent="Car"]
 position = Vector2(300, 0)
@@ -26,7 +24,6 @@ rotation = 1.5708
 ignore_rotation = false
 zoom = Vector2(0.4, 0.4)
 rotation_smoothing_enabled = true
-rotation_smoothing_speed = 0.7
 
 [node name="CenterContainer" type="CenterContainer" parent="Car/Camera2D"]
 anchors_preset = 8
@@ -65,5 +62,9 @@ stream = ExtResource("6_53jny")
 [node name="SpawnGhostTimer" type="Timer" parent="."]
 wait_time = 2.0
 
+[node name="OilTimer" type="Timer" parent="."]
+autostart = true
+
 [connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
 [connection signal="timeout" from="SpawnGhostTimer" to="." method="_on_spawn_ghost_timer_timeout"]
+[connection signal="timeout" from="OilTimer" to="." method="_on_oil_timer_timeout"]

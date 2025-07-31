@@ -4,6 +4,7 @@ extends CharacterBody2D
 @export var go = true
 @export var steerSpeedRps:float = 3.0;
 @export var speed:float = 250.0; # pixels per second
+@export var offRoadResist:float = 0.1
 
 signal waypointSignal
 
@@ -40,7 +41,18 @@ func _physics_process(delta: float) -> void:
 		$TurnSound.playing = false
 		$TurnSoundDelay.stop()
 	
-	velocity = Vector2.RIGHT.rotated(rotation) * speed
+#	count tires touching road to affect speed
+	var tiresOnTrack:float = 1.0
+	if $Tire1.has_overlapping_bodies() == false:
+		tiresOnTrack -= offRoadResist
+	if $Tire2.has_overlapping_bodies() == false:
+		tiresOnTrack -= offRoadResist
+	if $Tire3.has_overlapping_bodies() == false:
+		tiresOnTrack -= offRoadResist
+	if $Tire4.has_overlapping_bodies() == false:
+		tiresOnTrack -= offRoadResist
+	
+	velocity = Vector2.RIGHT.rotated(rotation) * speed * tiresOnTrack
 	
 	move_and_slide()
 	
