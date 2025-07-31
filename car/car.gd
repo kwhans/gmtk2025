@@ -1,3 +1,4 @@
+class_name Car
 extends CharacterBody2D
 
 @export var go = true

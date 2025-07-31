@@ -38,6 +38,8 @@ ui_right={
 
 2d_physics/layer_1="Layer 1"
 2d_physics/layer_2="Track"
+2d_physics/layer_3="Tires"
+2d_physics/layer_4="Oil"
 
 [rendering]
 

@@ -34,7 +34,7 @@ wait_time = 0.2
 one_shot = true
 
 [node name="Tire1" type="Area2D" parent="."]
-collision_layer = 2
+collision_layer = 6
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Tire1"]
@@ -42,7 +42,7 @@ position = Vector2(40, -24)
 shape = SubResource("RectangleShape2D_h3fet")
 
 [node name="Tire2" type="Area2D" parent="."]
-collision_layer = 2
+collision_layer = 6
 collision_mask = 2
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Tire2"]
@@ -50,7 +50,7 @@ position = Vector2(40, 24)
 shape = SubResource("RectangleShape2D_h3fet")
 
 [node name="Tire3" type="Area2D" parent="."]
-collision_layer = 2
+collision_layer = 6
 collision_mask = 2
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="Tire3"]
@@ -58,7 +58,7 @@ position = Vector2(-32, 24)
 shape = SubResource("RectangleShape2D_h3fet")
 
 [node name="Tire4" type="Area2D" parent="."]
-collision_layer = 2
+collision_layer = 6
 collision_mask = 2
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="Tire4"]
