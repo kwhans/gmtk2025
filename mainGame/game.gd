@@ -5,7 +5,7 @@ var startCountDownMessages = ["Ready?", "3", "2", "1", "GO!"]
 
 func _on_start_count_down_timer_timeout() -> void:
 	if startCountDownIdx < startCountDownMessages.size():
-		$CenterContainer/NarrationLabel.text = startCountDownMessages[startCountDownIdx]
+		%NarrationLabel.text = startCountDownMessages[startCountDownIdx]
 		startCountDownIdx += 1
 		if startCountDownIdx == startCountDownMessages.size():
 			$Car.go = true
@@ -14,4 +14,4 @@ func _on_start_count_down_timer_timeout() -> void:
 			$CountSound.play()
 	else:
 		$StartCountDownTimer.stop()
-		$CenterContainer/NarrationLabel.visible = false
+		%NarrationLabel.visible = false
