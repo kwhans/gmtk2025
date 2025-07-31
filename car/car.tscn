@@ -25,3 +25,9 @@ stream = ExtResource("3_jpe8o")
 
 [node name="TurnSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("4_h3fet")
+
+[node name="TurnSoundDelay" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="timeout" from="TurnSoundDelay" to="." method="_on_turn_sound_delay_timeout"]

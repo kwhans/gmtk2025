@@ -20,9 +20,18 @@ func _physics_process(delta: float) -> void:
 		
 	rotate(steerInput*delta)
 	
-	if(abs(steerInput) > 1.0 and $TurnSound.playing == false):
-		$TurnSound.play()
+	if(abs(steerInput) > 1.0):
+		if($TurnSound.playing == false && $TurnSoundDelay.is_stopped()):
+			$TurnSoundDelay.start()
+	else:
+		$TurnSound.playing = false
+		$TurnSoundDelay.stop()
 	
 	velocity = Vector2.RIGHT.rotated(rotation) * speed
 	
 	move_and_slide()
+
+
+func _on_turn_sound_delay_timeout() -> void:
+	if($TurnSound.playing == false):
+			$TurnSound.play()

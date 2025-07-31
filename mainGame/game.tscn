@@ -7,7 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://yf0m51d1kspe" path="res://mainGame/DialGo.wav" id="4_1nfcf"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_feb5d"]
-font_size = 48
+font_size = 64
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_o6bt6")
@@ -48,6 +48,8 @@ layout_mode = 2
 label_settings = SubResource("LabelSettings_feb5d")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="AudioListener2D" type="AudioListener2D" parent="Car/Camera2D"]
 
 [node name="StartCountDownTimer" type="Timer" parent="."]
 autostart = true
