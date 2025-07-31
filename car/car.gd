@@ -7,6 +7,8 @@ extends CharacterBody2D
 @export var offRoadResist:float = 0.1
 signal waypointSignal
 
+var explosionScene = preload("res://car/CarExplosion.tscn")
+
 # used for outputing to waypoints
 var steerIntent:float = 0.0 
 @onready var netSpeed:float = speed
@@ -69,3 +71,23 @@ func _physics_process(delta: float) -> void:
 func _on_turn_sound_delay_timeout() -> void:
 	if($TurnSound.playing == false):
 			$TurnSound.play()
+
+
+func _on_hit_box_2d_body_entered(_body: Node2D) -> void:
+	#TODO do we want to allow power-ups, or just die?
+	doExplosion()
+
+func doExplosion() -> void:
+	go = false
+	$HitBox2D/HB_Collider.set_deferred("disabled", true)
+	$PhysicsCollider.set_deferred("disabled", true)
+	$Sprite2D.visible = false
+
+	var game:Game = get_parent()
+	var explosion:CarExplosion = explosionScene.instantiate()
+	explosion.position = position
+	explosion.rotation = rotation
+	game.add_child(explosion)
+	
+	get_tree().paused = true
+	

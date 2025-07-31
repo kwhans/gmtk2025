@@ -36,10 +36,12 @@ ui_right={
 
 [layer_names]
 
-2d_physics/layer_1="Layer 1"
+2d_physics/layer_1="Player"
 2d_physics/layer_2="Track"
 2d_physics/layer_3="Tires"
 2d_physics/layer_4="Oil"
+2d_physics/layer_5="Ghost"
+2d_physics/layer_6="Barrier"
 
 [rendering]
 
