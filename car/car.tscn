@@ -1,9 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://c63ijka05dwmn"]
+[gd_scene load_steps=8 format=3 uid="uid://c63ijka05dwmn"]
 
 [ext_resource type="Script" uid="uid://cxlgahfmexswj" path="res://car/car.gd" id="1_dxy33"]
 [ext_resource type="Texture2D" uid="uid://bvklkkqa5gpq1" path="res://car/car_blue_3.png" id="2_hkabp"]
 [ext_resource type="AudioStream" uid="uid://4pbv5fhsv37m" path="res://car/drive.wav" id="3_jpe8o"]
 [ext_resource type="AudioStream" uid="uid://ce7ppu78sexuj" path="res://car/tireSqueal.wav" id="4_h3fet"]
+
+[sub_resource type="Curve" id="Curve_jpe8o"]
+_limits = [1.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 2.75281), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jpe8o"]
 size = Vector2(60, 116)
@@ -14,6 +19,10 @@ size = Vector2(20, 10)
 [node name="Car" type="CharacterBody2D"]
 script = ExtResource("1_dxy33")
 go = false
+speed = 1000.0
+minRotationDegreesForSmoothing = 10.0
+maxRotationDegreesForSmoothing = 30.0
+cameraSmoothingCurve = SubResource("Curve_jpe8o")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
