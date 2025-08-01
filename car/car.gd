@@ -6,6 +6,7 @@ extends CharacterBody2D
 @export var speed:float = 900.0; # pixels per second
 @export var offRoadResist:float = 0.1
 @export var lapAcceleration:float = 0.05 # multiplier per lap completed
+@export var oilSlowdown:float = 0.5
 
 var lapsCompleted = 0
 
@@ -26,7 +27,10 @@ func _physics_process(delta: float) -> void:
 		return
 	if $DriveSound.playing == false:
 		$DriveSound.play()
-		
+	
+	var isOilInEffect = not $OilEffectTimer.is_stopped()
+	var oilFactor:float = oilSlowdown if isOilInEffect else 1.0
+			
 	var steerInput:float = 0.0
 	var inputChanged:bool = false
 		
@@ -35,6 +39,10 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("ui_right"):
 		steerInput += steerSpeedRps;
 		
+	if isOilInEffect:
+		const inertia:float = 0.9
+		steerInput = steerIntent*inertia + steerInput*(1-inertia) # oil locks you into your previous steering input
+			
 	if steerIntent != steerInput:
 		inputChanged = true
 		
@@ -61,7 +69,7 @@ func _physics_process(delta: float) -> void:
 		tiresOnTrack -= offRoadResist
 	
 	var lapFactor = 1 + lapsCompleted * lapAcceleration
-	var effectiveSpeed = speed * tiresOnTrack * lapFactor
+	var effectiveSpeed = speed * tiresOnTrack * lapFactor * oilFactor
 	if effectiveSpeed != netSpeed:
 		inputChanged = true
 		
@@ -101,9 +109,12 @@ func revive() -> void:
 	$PhysicsCollider.set_deferred("disabled", false)
 	steerIntent = 0.0
 	lapsCompleted = 0
+	$TurnSoundDelay.stop()
 	if($DriveSound.playing == true):
 		$DriveSound.stop()
 	if($TurnSound.playing == true):
 		$TurnSound.stop()
 	$Sprite2D.visible = true
 	
+func applyOil() -> void:
+	$OilEffectTimer.start()

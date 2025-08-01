@@ -16,11 +16,9 @@ var lapsCompleted:int = 0
 var totalLapsToWin:int = 10
 
 func _ready() -> void:
-	#$Car.waypointSignal.connect(recordWaypoint)
 	carStartPos = $Car.position
 	carStartRotation = $Car.rotation
 	carStartSpeed = $Car.speed
-	%GameOverDialog.restartGameSignal.connect(restartGame)
 
 func _on_start_count_down_timer_timeout() -> void:
 	if startCountDownIdx < startCountDownMessages.size():
@@ -42,7 +40,7 @@ func _on_start_count_down_timer_timeout() -> void:
 		%NarrationLabel.visible = false
 
 func recordWaypoint(isNewLap:bool) -> void:
-	if carHistory.size() > 1000000: #arbitrary limit so we can't overflow
+	if carHistory.size() > 10000000: #arbitrary limit so we can't overflow
 		return
 		
 	var newWaypoint = Waypoint.new()
@@ -109,6 +107,7 @@ func restartGame() -> void:
 	#$SpawnGhostTimer.stop() # just in case we did a reset without a game over
 	
 	%GameOverDialog.visible = false
+	%RaceFinishedDialog.visible = false
 	print("Restarting game...")
 	
 	lapsCompleted = 0
@@ -146,6 +145,8 @@ func _on_basic_track_lap_complete_signal() -> void:
 	recordWaypoint(true)
 	%GameOverDialog.updateLabel(lapsCompleted,totalLapsToWin)
 	$Car.lapsCompleted = lapsCompleted
+	if lapsCompleted >= totalLapsToWin:
+		finishRace()
 
 func getLapsCompleted() -> int:
 	return lapsCompleted
@@ -159,10 +160,55 @@ func _on_basic_track_lap_almost_complete_signal() -> void:
 	for ghost in allGhosts:
 		ghost.queue_free()
 		
-	# mae a fresh batch of ghosts
+	# make a fresh batch of ghosts
 	for wayPt in lapStartWaypoints:
 		spawnGhostCar(wayPt)
 	
 
 func _on_car_waypoint_signal() -> void:
 	recordWaypoint(false)
+
+func finishRace() -> void:
+	get_tree().paused = true
+	#TODO celebration
+	$GameWinTimer.start()
+
+func _on_game_win_timer_timeout() -> void:
+	if carHistory.size() < 1:
+		return
+		
+	var lastWaypoint = carHistory[carHistory.size()-1]
+	var totalTimeSec = lastWaypoint.millisSinceStart / 1000.0
+	
+	var bestTimeMs = 999999999
+	var bestLap = 0
+	var worstTimeMs = 0
+	var worstLap = 0
+	var previousLapEnd = 0
+	var lapCounter = 0
+	for wayPtIdx in lapStartWaypoints:
+		# skip first waypoint or your best time will be 0
+		if wayPtIdx == 0:
+			continue 
+		lapCounter += 1
+		var wp:Waypoint = carHistory[wayPtIdx]
+		var lapTime = wp.millisSinceStart - previousLapEnd
+		if lapTime < bestTimeMs:
+			bestTimeMs = lapTime
+			bestLap = lapCounter
+		if lapTime > worstTimeMs:
+			worstTimeMs = lapTime
+			worstLap = lapCounter
+		previousLapEnd = wp.millisSinceStart
+	var bestLapSec = bestTimeMs / 1000.0
+	var worstLapSec = worstTimeMs / 1000.0
+	
+	%RaceFinishedDialog.updateLabels(totalTimeSec, bestLap, bestLapSec, worstLap, worstLapSec)
+	%RaceFinishedDialog.visible = true
+
+func _on_game_over_dialog_restart_game_signal() -> void:
+	restartGame()
+
+func _on_race_finished_dialog_next_race_signal() -> void:
+	# TODO load next level
+	restartGame()

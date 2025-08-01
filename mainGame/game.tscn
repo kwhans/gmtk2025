@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=10 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://1rjoaov6w52v" path="res://mainGame/Dial.wav" id="3_53jny"]
 [ext_resource type="AudioStream" uid="uid://yf0m51d1kspe" path="res://mainGame/DialGo.wav" id="4_1nfcf"]
 [ext_resource type="PackedScene" uid="uid://dmmqvslef4a1s" path="res://dialog/GameOverDialog.tscn" id="4_p1h4l"]
+[ext_resource type="PackedScene" uid="uid://dgndretdd7f5n" path="res://dialog/RaceFinishedDialog.tscn" id="5_p1h4l"]
 [ext_resource type="AudioStream" uid="uid://c702salwdox34" path="res://mainGame/Ready.wav" id="6_53jny"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_feb5d"]
@@ -18,7 +19,6 @@ script = ExtResource("1_o6bt6")
 
 [node name="Car" parent="." instance=ExtResource("2_38t2v")]
 position = Vector2(1337, 831)
-speed = 900.0
 
 [node name="Camera2D" type="Camera2D" parent="Car"]
 process_mode = 3
@@ -54,6 +54,10 @@ vertical_alignment = 1
 unique_name_in_owner = true
 visible = false
 
+[node name="RaceFinishedDialog" parent="Car/Camera2D" instance=ExtResource("5_p1h4l")]
+unique_name_in_owner = true
+visible = false
+
 [node name="StartCountDownTimer" type="Timer" parent="."]
 autostart = true
 
@@ -77,10 +81,18 @@ process_mode = 3
 wait_time = 3.0
 one_shot = true
 
+[node name="GameWinTimer" type="Timer" parent="."]
+process_mode = 3
+wait_time = 3.0
+one_shot = true
+
 [connection signal="lapAlmostCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_almost_complete_signal"]
 [connection signal="lapCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_complete_signal"]
 [connection signal="waypointSignal" from="Car" to="." method="_on_car_waypoint_signal"]
+[connection signal="restartGameSignal" from="Car/Camera2D/GameOverDialog" to="." method="_on_game_over_dialog_restart_game_signal"]
+[connection signal="nextRaceSignal" from="Car/Camera2D/RaceFinishedDialog" to="." method="_on_race_finished_dialog_next_race_signal"]
 [connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
 [connection signal="timeout" from="SpawnGhostTimer" to="." method="_on_spawn_ghost_timer_timeout"]
 [connection signal="timeout" from="OilTimer" to="." method="_on_oil_timer_timeout"]
 [connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
+[connection signal="timeout" from="GameWinTimer" to="." method="_on_game_win_timer_timeout"]
