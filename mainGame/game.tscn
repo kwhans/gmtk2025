@@ -18,8 +18,10 @@ script = ExtResource("1_o6bt6")
 
 [node name="Car" parent="." instance=ExtResource("2_38t2v")]
 position = Vector2(1337, 831)
+speed = 900.0
 
 [node name="Camera2D" type="Camera2D" parent="Car"]
+process_mode = 3
 position = Vector2(300, 0)
 rotation = 1.5708
 ignore_rotation = false
@@ -75,6 +77,9 @@ process_mode = 3
 wait_time = 3.0
 one_shot = true
 
+[connection signal="lapAlmostCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_almost_complete_signal"]
+[connection signal="lapCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_complete_signal"]
+[connection signal="waypointSignal" from="Car" to="." method="_on_car_waypoint_signal"]
 [connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
 [connection signal="timeout" from="SpawnGhostTimer" to="." method="_on_spawn_ghost_timer_timeout"]
 [connection signal="timeout" from="OilTimer" to="." method="_on_oil_timer_timeout"]

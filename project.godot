@@ -46,6 +46,7 @@ ui_right={
 2d_physics/layer_4="Oil"
 2d_physics/layer_5="Ghost"
 2d_physics/layer_6="Barrier"
+2d_physics/layer_7="Marker"
 
 [rendering]
 

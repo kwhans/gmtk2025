@@ -4,6 +4,7 @@ class_name Game
 var startCountDownIdx = 0
 var startCountDownMessages = ["Ready?", "3", "2", "1", "GO!"]
 var carHistory:Array[Waypoint] = []
+var lapStartWaypoints:Array[int] = []
 var millisAtStart:int = 0;
 var carStartPos:Vector2 = Vector2.ZERO
 var carStartRotation:float = 0.0
@@ -11,9 +12,11 @@ var carStartSpeed:float = 0.0
 var ghostCarScene = preload("res://car/ghostCar.tscn")
 var oilSpillScene = preload("res://obstacles/OilSpill.tscn")
 @export var spawnSafetyRadius:float = 600
+var lapsCompleted:int = 0
+var totalLapsToWin:int = 10
 
 func _ready() -> void:
-	$Car.waypointSignal.connect(recordWaypoint)
+	#$Car.waypointSignal.connect(recordWaypoint)
 	carStartPos = $Car.position
 	carStartRotation = $Car.rotation
 	carStartSpeed = $Car.speed
@@ -28,8 +31,8 @@ func _on_start_count_down_timer_timeout() -> void:
 			$Car.go = true
 			$GoSound.play()
 			millisAtStart = Time.get_ticks_msec()
-			recordWaypoint()
-			$SpawnGhostTimer.start()
+			recordWaypoint(true)
+			#$SpawnGhostTimer.start()
 		elif startCountDownIdx > 1:
 			$CountSound.play()
 		elif startCountDownIdx == 1:
@@ -38,7 +41,7 @@ func _on_start_count_down_timer_timeout() -> void:
 		$StartCountDownTimer.stop()
 		%NarrationLabel.visible = false
 
-func recordWaypoint() -> void:
+func recordWaypoint(isNewLap:bool) -> void:
 	if carHistory.size() > 1000000: #arbitrary limit so we can't overflow
 		return
 		
@@ -51,6 +54,9 @@ func recordWaypoint() -> void:
 	newWaypoint.speed = $Car.netSpeed
 	
 	carHistory.append(newWaypoint)
+	
+	if(isNewLap):
+		lapStartWaypoints.append(carHistory.size()-1)
 	#print("Added waypoint ", carHistory.size())
 
 func getWaypoint(waypointIdx:int) -> Waypoint:
@@ -58,10 +64,22 @@ func getWaypoint(waypointIdx:int) -> Waypoint:
 		return null
 	return carHistory[waypointIdx]
 
-func spawnGhostCar() -> void:
-	var ghost = ghostCarScene.instantiate()
-	ghost.position = carStartPos
-	add_child(ghost)
+func spawnGhostCar(startingWaypointIdx:int=0) -> void:
+	var ghost:GhostCar = ghostCarScene.instantiate()
+	
+	#start at specified waypoint if available
+	if startingWaypointIdx > 0 and startingWaypointIdx < carHistory.size():
+		# This ghost is skipping to a later lap
+		var wayPt:Waypoint = carHistory[startingWaypointIdx]
+		ghost.nextWaypointIdx = startingWaypointIdx
+		ghost.timeSkipMillis = wayPt.millisSinceStart
+		ghost.position = wayPt.position
+		ghost.rotation = wayPt.rotation
+		ghost.speed = wayPt.speed
+		ghost.steerIntent = wayPt.steerIntent
+	else:
+		ghost.position = carStartPos
+	call_deferred("add_child", ghost)
 
 
 func _on_spawn_ghost_timer_timeout() -> void:
@@ -83,15 +101,17 @@ func _on_oil_timer_timeout() -> void:
 	$BasicTrack.add_child(newOil)
 
 func doGameOver() -> void:
-	$SpawnGhostTimer.stop()
+	#$SpawnGhostTimer.stop()
 	get_tree().paused = true
 	$GameOverTimer.start()
 
 func restartGame() -> void:
-	$SpawnGhostTimer.stop() # just in case we did a reset without a game over
+	#$SpawnGhostTimer.stop() # just in case we did a reset without a game over
 	
 	%GameOverDialog.visible = false
 	print("Restarting game...")
+	
+	lapsCompleted = 0
 	
 	# clear ghosts and waypoints
 	var allGhosts = get_tree().get_nodes_in_group("Ghosts")
@@ -119,3 +139,29 @@ func restartGame() -> void:
 
 func _on_game_over_timer_timeout() -> void:
 	%GameOverDialog.visible = true
+
+
+func _on_basic_track_lap_complete_signal() -> void:
+	lapsCompleted += 1
+	recordWaypoint(true)
+	%GameOverDialog.updateLabel(lapsCompleted,totalLapsToWin)
+
+func getLapsCompleted() -> int:
+	return lapsCompleted
+	
+func getTotalLapsRequired() -> int:
+	return totalLapsToWin
+
+func _on_basic_track_lap_almost_complete_signal() -> void:
+	# remove previous lap ghosts
+	var allGhosts = get_tree().get_nodes_in_group("Ghosts")
+	for ghost in allGhosts:
+		ghost.queue_free()
+		
+	# mae a fresh batch of ghosts
+	for wayPt in lapStartWaypoints:
+		spawnGhostCar(wayPt)
+	
+
+func _on_car_waypoint_signal() -> void:
+	recordWaypoint(false)
