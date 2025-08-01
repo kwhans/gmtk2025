@@ -145,6 +145,7 @@ func _on_basic_track_lap_complete_signal() -> void:
 	lapsCompleted += 1
 	recordWaypoint(true)
 	%GameOverDialog.updateLabel(lapsCompleted,totalLapsToWin)
+	$Car.lapsCompleted = lapsCompleted
 
 func getLapsCompleted() -> int:
 	return lapsCompleted

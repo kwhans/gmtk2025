@@ -3,8 +3,12 @@ extends CharacterBody2D
 
 @export var go = true
 @export var steerSpeedRps:float = 3.0;
-@export var speed:float = 250.0; # pixels per second
+@export var speed:float = 900.0; # pixels per second
 @export var offRoadResist:float = 0.1
+@export var lapAcceleration:float = 0.05 # multiplier per lap completed
+
+var lapsCompleted = 0
+
 signal waypointSignal
 
 var explosionScene = preload("res://car/CarExplosion.tscn")
@@ -56,7 +60,8 @@ func _physics_process(delta: float) -> void:
 	if $Tire4.has_overlapping_bodies() == false:
 		tiresOnTrack -= offRoadResist
 	
-	var effectiveSpeed = speed * tiresOnTrack
+	var lapFactor = 1 + lapsCompleted * lapAcceleration
+	var effectiveSpeed = speed * tiresOnTrack * lapFactor
 	if effectiveSpeed != netSpeed:
 		inputChanged = true
 		
@@ -95,5 +100,10 @@ func revive() -> void:
 	$HitBox2D/HB_Collider.set_deferred("disabled", false)
 	$PhysicsCollider.set_deferred("disabled", false)
 	steerIntent = 0.0
+	lapsCompleted = 0
+	if($DriveSound.playing == true):
+		$DriveSound.stop()
+	if($TurnSound.playing == true):
+		$TurnSound.stop()
 	$Sprite2D.visible = true
 	
