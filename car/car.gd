@@ -5,7 +5,13 @@ extends CharacterBody2D
 @export var steerSpeedRps:float = 3.0;
 @export var speed:float = 250.0; # pixels per second
 @export var offRoadResist:float = 0.1
+@export var minRotationDegreesForSmoothing:float = 0.5
+@export var maxRotationDegreesForSmoothing:float = 45
+
+@export var cameraSmoothingCurve:Curve
 signal waypointSignal
+
+var bCameraRotating = false
 
 # used for outputing to waypoints
 var steerIntent:float = 0.0 
@@ -13,6 +19,29 @@ var steerIntent:float = 0.0
 
 func _ready() -> void:
 	pass
+
+
+func ApplyCameraRotation(steerInput:float):
+	var cameraNode:Camera2D = find_child("Camera2D")
+	if not cameraNode:
+		return
+		
+	var angleDifferenceDegrees = abs(angle_difference(cameraNode.get_viewport_transform().get_rotation(), global_rotation))
+
+	var cameraSmoothingSpeed = 0.1
+	if angleDifferenceDegrees >= minRotationDegreesForSmoothing:
+		var percentDiff = clampf(angleDifferenceDegrees, minRotationDegreesForSmoothing, maxRotationDegreesForSmoothing)
+		percentDiff = percentDiff - minRotationDegreesForSmoothing
+		percentDiff = percentDiff / (maxRotationDegreesForSmoothing - minRotationDegreesForSmoothing)
+		cameraSmoothingSpeed = cameraSmoothingCurve.sample(percentDiff)
+		bCameraRotating = true
+	elif bCameraRotating and angleDifferenceDegrees > 0.001:
+		cameraSmoothingSpeed = cameraSmoothingCurve.sample(0)
+		
+	bCameraRotating = angleDifferenceDegrees > 0.001
+	print("Camera Pos: ", cameraNode.position)
+	cameraNode.rotation_smoothing_speed = cameraSmoothingSpeed
+	cameraNode.position_smoothing_speed = cameraSmoothingSpeed
 	
 func _physics_process(delta: float) -> void:
 	if not go:
@@ -35,6 +64,7 @@ func _physics_process(delta: float) -> void:
 	steerIntent = steerInput
 	
 	rotate(steerInput*delta)
+	ApplyCameraRotation(steerInput)
 	
 	if(abs(steerInput) > 1.0):
 		if($TurnSound.playing == false && $TurnSoundDelay.is_stopped()):
