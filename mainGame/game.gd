@@ -11,14 +11,28 @@ var carStartRotation:float = 0.0
 var carStartSpeed:float = 0.0
 var ghostCarScene = preload("res://car/ghostCar.tscn")
 var oilSpillScene = preload("res://obstacles/OilSpill.tscn")
+var barrelScene = preload("res://obstacles/barrelObstacle.tscn")
+var barrelScene2 = preload("res://obstacles/sidewaysBarrel.tscn")
+var wallScene1 = preload("res://obstacles/wallRed.tscn")
+var wallScene2 = preload("res://obstacles/wallRedWithWord.tscn")
+var wallScene3 = preload("res://obstacles/wallWhite.tscn")
+var wallScene4 = preload("res://obstacles/wallWhiteWithWord.tscn")
+var rockScene1 = preload("res://obstacles/Rock1.tscn")
+var rockScene2 = preload("res://obstacles/Rock2.tscn")
+var rockScene3 = preload("res://obstacles/Rock3.tscn")
+
 @export var spawnSafetyRadius:float = 600
 var lapsCompleted:int = 0
-var totalLapsToWin:int = 10
+
+# Game parameters
+var totalLapsToWin:int = 5
+var numberOfObstaclesToPlace:int = 10
 
 func _ready() -> void:
 	carStartPos = $Car.position
 	carStartRotation = $Car.rotation
 	carStartSpeed = $Car.speed
+	placeAllObstacles()
 
 func _on_start_count_down_timer_timeout() -> void:
 	if startCountDownIdx < startCountDownMessages.size():
@@ -83,10 +97,53 @@ func spawnGhostCar(startingWaypointIdx:int=0) -> void:
 func _on_spawn_ghost_timer_timeout() -> void:
 	spawnGhostCar()
 
+func applyOdds(remainingOdds:int, nextOdds:int) -> int:
+	return remainingOdds - nextOdds
+	
+func createRandomObstacle() -> Node2D:
+	# Choose a random obstacle to place
+	# Note that all obstacles should belong to group "Obstacles" so that they get cleared on a reset
+	const oilOdds = 20
+	const barrelOdds = 10 # per barrel type (2)
+	const wallOdds = 1 # per wall type (4)
+	const rockOdds = 1 # per rock type (3)
+	const totalOdds = oilOdds + barrelOdds*2 + wallOdds*4 + rockOdds*3
 
-func _on_oil_timer_timeout() -> void:
+	var pick = randi() % totalOdds
+	pick -= oilOdds
+	if pick < 0:
+		return oilSpillScene.instantiate()
+	pick -= barrelOdds
+	if pick < 0:
+		return barrelScene.instantiate()
+	pick -= barrelOdds
+	if pick < 0:
+		return barrelScene2.instantiate()
+	pick -= wallOdds
+	if pick < 0:
+		return wallScene1.instantiate()
+	pick -= wallOdds
+	if pick < 0:
+		return wallScene2.instantiate()
+	pick -= wallOdds
+	if pick < 0:
+		return wallScene3.instantiate()
+	pick -= wallOdds
+	if pick < 0:
+		return wallScene4.instantiate()
+	pick -= rockOdds
+	if pick < 0:
+		return rockScene1.instantiate()
+	pick -= rockOdds
+	if pick < 0:
+		return rockScene2.instantiate()
+	pick -= rockOdds
+	if pick < 0:
+		return rockScene3.instantiate()
+	return oilSpillScene.instantiate()
+
+func placeRandomObstacle() -> void:
 	var tiles:Array[Vector2i] = $BasicTrack.getTrackTiles()
-	var newOil:OilSpill = oilSpillScene.instantiate()
 	var targetPosition:Vector2
 	var goodTarget:bool = false
 	while !goodTarget: #keep the oil from spawning right in front of the car
@@ -94,9 +151,18 @@ func _on_oil_timer_timeout() -> void:
 		targetPosition = (randomTile * 128.0) + Vector2(randf_range(0,128),randf_range(0,128)) - $BasicTrack.position
 		goodTarget = targetPosition.distance_to($Car.position) > spawnSafetyRadius
 		#print_debug("recalculated position")
-	newOil.position = targetPosition
-	newOil.rotation = randf_range(0, TAU)
-	$BasicTrack.add_child(newOil)
+		
+	var newNode:Node2D = createRandomObstacle()
+	newNode.position = targetPosition
+	newNode.rotation = randf_range(0, TAU)
+	$BasicTrack.add_child(newNode)
+	
+func _on_oil_timer_timeout() -> void:
+	placeRandomObstacle()
+
+func placeAllObstacles() -> void:
+	for i in range(numberOfObstaclesToPlace):
+		placeRandomObstacle()
 
 func doGameOver() -> void:
 	#$SpawnGhostTimer.stop()
@@ -117,6 +183,7 @@ func restartGame() -> void:
 	for ghost in allGhosts:
 		ghost.queue_free()
 	
+	lapStartWaypoints.clear()
 	carHistory.clear()
 	
 	# clear all obstacles
@@ -124,6 +191,9 @@ func restartGame() -> void:
 	for obs in allObstacles:
 		obs.queue_free()
 		
+	# make new obstacles
+	placeAllObstacles()
+	
 	# Fix the car
 	$Car.go = false
 	$Car.position = carStartPos
@@ -160,9 +230,11 @@ func _on_basic_track_lap_almost_complete_signal() -> void:
 	for ghost in allGhosts:
 		ghost.queue_free()
 		
-	# make a fresh batch of ghosts
-	for wayPt in lapStartWaypoints:
-		spawnGhostCar(wayPt)
+	# skip making new ghosts if this was the last lap
+	if lapsCompleted < totalLapsToWin-1:
+		# make a fresh batch of ghosts
+		for wayPt in lapStartWaypoints:
+			spawnGhostCar(wayPt)
 	
 
 func _on_car_waypoint_signal() -> void:

@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://k11fwqv77ipe"]
+
+[ext_resource type="Texture2D" uid="uid://fehixfknfwyy" path="res://obstacles/barrel_blue.png" id="1_y1y8j"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0sat0"]
+radius = 28.0
+
+[node name="BarrelObstacle" type="StaticBody2D" groups=["Obstacles"]]
+collision_layer = 128
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_y1y8j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_0sat0")

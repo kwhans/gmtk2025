@@ -47,6 +47,7 @@ ui_right={
 2d_physics/layer_5="Ghost"
 2d_physics/layer_6="Barrier"
 2d_physics/layer_7="Marker"
+2d_physics/layer_8="Obstacle"
 
 [rendering]
 

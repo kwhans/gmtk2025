@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmh5lipt0bsju"]
+
+[ext_resource type="Texture2D" uid="uid://btn6sbs2gvya7" path="res://obstacles/barrel_blue_down.png" id="1_jjjdb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gfude"]
+size = Vector2(68, 46)
+
+[node name="SidewaysBarrel" type="StaticBody2D" groups=["Obstacles"]]
+collision_layer = 128
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_jjjdb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_gfude")
