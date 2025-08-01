@@ -70,7 +70,7 @@ func _physics_process(delta: float) -> void:
 
 func _on_turn_sound_delay_timeout() -> void:
 	if($TurnSound.playing == false):
-			$TurnSound.play()
+		$TurnSound.play()
 
 
 func _on_hit_box_2d_body_entered(_body: Node2D) -> void:
@@ -89,5 +89,11 @@ func doExplosion() -> void:
 	explosion.rotation = rotation
 	game.add_child(explosion)
 	
-	get_tree().paused = true
+	game.doGameOver()
+
+func revive() -> void:
+	$HitBox2D/HB_Collider.set_deferred("disabled", false)
+	$PhysicsCollider.set_deferred("disabled", false)
+	steerIntent = 0.0
+	$Sprite2D.visible = true
 	

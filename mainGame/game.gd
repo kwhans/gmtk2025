@@ -6,6 +6,8 @@ var startCountDownMessages = ["Ready?", "3", "2", "1", "GO!"]
 var carHistory:Array[Waypoint] = []
 var millisAtStart:int = 0;
 var carStartPos:Vector2 = Vector2.ZERO
+var carStartRotation:float = 0.0
+var carStartSpeed:float = 0.0
 var ghostCarScene = preload("res://car/ghostCar.tscn")
 var oilSpillScene = preload("res://obstacles/OilSpill.tscn")
 @export var spawnSafetyRadius:float = 600
@@ -13,10 +15,14 @@ var oilSpillScene = preload("res://obstacles/OilSpill.tscn")
 func _ready() -> void:
 	$Car.waypointSignal.connect(recordWaypoint)
 	carStartPos = $Car.position
+	carStartRotation = $Car.rotation
+	carStartSpeed = $Car.speed
+	%GameOverDialog.restartGameSignal.connect(restartGame)
 
 func _on_start_count_down_timer_timeout() -> void:
 	if startCountDownIdx < startCountDownMessages.size():
 		%NarrationLabel.text = startCountDownMessages[startCountDownIdx]
+		%NarrationLabel.visible = true
 		startCountDownIdx += 1
 		if startCountDownIdx == startCountDownMessages.size():
 			$Car.go = true
@@ -75,3 +81,41 @@ func _on_oil_timer_timeout() -> void:
 	newOil.position = targetPosition
 	newOil.rotation = randf_range(0, TAU)
 	$BasicTrack.add_child(newOil)
+
+func doGameOver() -> void:
+	$SpawnGhostTimer.stop()
+	get_tree().paused = true
+	$GameOverTimer.start()
+
+func restartGame() -> void:
+	$SpawnGhostTimer.stop() # just in case we did a reset without a game over
+	
+	%GameOverDialog.visible = false
+	print("Restarting game...")
+	
+	# clear ghosts and waypoints
+	var allGhosts = get_tree().get_nodes_in_group("Ghosts")
+	for ghost in allGhosts:
+		ghost.queue_free()
+	
+	carHistory.clear()
+	
+	# clear all obstacles
+	var allObstacles = get_tree().get_nodes_in_group("Obstacles")
+	for obs in allObstacles:
+		obs.queue_free()
+		
+	# Fix the car
+	$Car.go = false
+	$Car.position = carStartPos
+	$Car.rotation = carStartRotation
+	$Car.revive()
+	
+	get_tree().paused = false
+	
+	startCountDownIdx = 0
+	$StartCountDownTimer.start()
+	
+
+func _on_game_over_timer_timeout() -> void:
+	%GameOverDialog.visible = true

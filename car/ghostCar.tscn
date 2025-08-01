@@ -7,7 +7,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jpe8o"]
 size = Vector2(60, 116)
 
-[node name="GhostCar" type="CharacterBody2D"]
+[node name="GhostCar" type="CharacterBody2D" groups=["Ghosts"]]
 collision_layer = 16
 collision_mask = 0
 script = ExtResource("1_h437j")

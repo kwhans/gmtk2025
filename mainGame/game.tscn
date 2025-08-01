@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=9 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
 [ext_resource type="PackedScene" uid="uid://47aacx1x23h0" path="res://Tracks/basic_track.tscn" id="2_53jny"]
 [ext_resource type="AudioStream" uid="uid://1rjoaov6w52v" path="res://mainGame/Dial.wav" id="3_53jny"]
 [ext_resource type="AudioStream" uid="uid://yf0m51d1kspe" path="res://mainGame/DialGo.wav" id="4_1nfcf"]
+[ext_resource type="PackedScene" uid="uid://dmmqvslef4a1s" path="res://dialog/GameOverDialog.tscn" id="4_p1h4l"]
 [ext_resource type="AudioStream" uid="uid://c702salwdox34" path="res://mainGame/Ready.wav" id="6_53jny"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_feb5d"]
@@ -47,6 +48,10 @@ vertical_alignment = 1
 
 [node name="AudioListener2D" type="AudioListener2D" parent="Car/Camera2D"]
 
+[node name="GameOverDialog" parent="Car/Camera2D" instance=ExtResource("4_p1h4l")]
+unique_name_in_owner = true
+visible = false
+
 [node name="StartCountDownTimer" type="Timer" parent="."]
 autostart = true
 
@@ -65,6 +70,12 @@ wait_time = 2.0
 [node name="OilTimer" type="Timer" parent="."]
 autostart = true
 
+[node name="GameOverTimer" type="Timer" parent="."]
+process_mode = 3
+wait_time = 3.0
+one_shot = true
+
 [connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
 [connection signal="timeout" from="SpawnGhostTimer" to="." method="_on_spawn_ghost_timer_timeout"]
 [connection signal="timeout" from="OilTimer" to="." method="_on_oil_timer_timeout"]
+[connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
