@@ -28,6 +28,11 @@ var lapsCompleted:int = 0
 var totalLapsToWin:int = 5
 var numberOfObstaclesToPlace:int = 10
 
+func _input(_event: InputEvent) -> void:
+	pass
+	#if event.is_action("ui_accept"):
+	#	celebrate()
+
 func _ready() -> void:
 	carStartPos = $Car.position
 	carStartRotation = $Car.rotation
@@ -54,6 +59,8 @@ func _on_start_count_down_timer_timeout() -> void:
 		%NarrationLabel.visible = false
 
 func recordWaypoint(isNewLap:bool) -> void:
+	if lapsCompleted >= totalLapsToWin:
+		return # stop recording after we win or it messes up the final time
 	if carHistory.size() > 10000000: #arbitrary limit so we can't overflow
 		return
 		
@@ -211,8 +218,8 @@ func _on_game_over_timer_timeout() -> void:
 
 
 func _on_basic_track_lap_complete_signal() -> void:
+	recordWaypoint(true) # this has to come before incrementing lapsCompleted or else it stops recording before the last one
 	lapsCompleted += 1
-	recordWaypoint(true)
 	%GameOverDialog.updateLabel(lapsCompleted,totalLapsToWin)
 	$Car.lapsCompleted = lapsCompleted
 	if lapsCompleted >= totalLapsToWin:
@@ -245,8 +252,10 @@ func _on_car_waypoint_signal() -> void:
 	recordWaypoint(false)
 
 func finishRace() -> void:
-	get_tree().paused = true
-	#TODO celebration
+	#get_tree().paused = true
+	celebrate() # start the firework countdown
+	$BasicTrack.celebrate() # fire off the confetti
+	$GameWinPauseTimer.start()
 	$GameWinTimer.start()
 
 func _on_game_win_timer_timeout() -> void:
@@ -288,3 +297,24 @@ func _on_game_over_dialog_restart_game_signal() -> void:
 func _on_race_finished_dialog_next_race_signal() -> void:
 	# TODO load next level
 	restartGame()
+
+func _on_game_win_pause_timer_timeout() -> void:
+	get_tree().paused = true
+
+func celebrate()->void:
+	# TODO add a cheering sound
+	$FireworkTimer1.start()
+	$FireworkTimer2.start()
+	$FireworkTimer3.start()
+
+
+func _on_firework_timer_1_timeout() -> void:
+	%Firework1.startEffect()
+
+
+func _on_firework_timer_2_timeout() -> void:
+	%Firework2.startEffect()
+
+
+func _on_firework_timer_3_timeout() -> void:
+	%Firework3.startEffect()

@@ -37,9 +37,11 @@ shape = SubResource("RectangleShape2D_bkrhx")
 
 [node name="DriveSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_jpe8o")
+volume_db = -9.905
 
 [node name="TurnSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("4_h3fet")
+volume_db = -8.914
 
 [node name="TurnSoundDelay" type="Timer" parent="."]
 wait_time = 0.2

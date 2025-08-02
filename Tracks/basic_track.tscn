@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=4 uid="uid://47aacx1x23h0"]
+[gd_scene load_steps=12 format=4 uid="uid://47aacx1x23h0"]
 
 [ext_resource type="TileSet" uid="uid://cycowg30fwy15" path="res://Tracks/trackTiles.tres" id="1_8p6x3"]
 [ext_resource type="Script" uid="uid://de6g48mw513k3" path="res://Tracks/basic_track.gd" id="1_672jt"]
 [ext_resource type="PackedScene" uid="uid://bkjy1ifekf8e4" path="res://obstacles/barrel.tscn" id="3_rxlrt"]
+[ext_resource type="PackedScene" uid="uid://byojtw2rxw51q" path="res://celebration/confetti.tscn" id="4_r3vv3"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_pqv1i"]
 scenes/1/scene = ExtResource("3_rxlrt")
@@ -75,6 +76,14 @@ collision_layer = 64
 [node name="FinishCollider" type="CollisionShape2D" parent="LoopMarker5Finish"]
 position = Vector2(1472, 824)
 shape = SubResource("RectangleShape2D_d05wp")
+
+[node name="Confetti1" parent="." instance=ExtResource("4_r3vv3")]
+position = Vector2(1471, 638)
+rotation = 2.0944
+
+[node name="Confetti2" parent="." instance=ExtResource("4_r3vv3")]
+position = Vector2(1471, 1024)
+rotation = 1.0472
 
 [connection signal="body_entered" from="LoopMarker1" to="." method="_on_loop_marker_body_entered" binds= [1]]
 [connection signal="body_entered" from="LoopMarker2" to="." method="_on_loop_marker_body_entered" binds= [2]]

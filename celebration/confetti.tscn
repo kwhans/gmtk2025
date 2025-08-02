@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://byojtw2rxw51q"]
+[gd_scene load_steps=5 format=3 uid="uid://byojtw2rxw51q"]
 
+[ext_resource type="Script" uid="uid://bxbd08vj6e0w5" path="res://celebration/confetti.gd" id="1_0u6qv"]
 [ext_resource type="Texture2D" uid="uid://tb4joxwfeb6h" path="res://celebration/trace_07.png" id="1_lhnel"]
+[ext_resource type="AudioStream" uid="uid://bwsnyd542sx7r" path="res://celebration/Spout.wav" id="3_0u0ad"]
 
 [sub_resource type="Curve" id="Curve_awcl5"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -8,6 +10,8 @@ _data = [Vector2(0, -0.910113), 0.0, 0.0, 0, 0, Vector2(0.715909, 1), 0.0, 0.0, 
 point_count = 2
 
 [node name="Confetti" type="Node2D"]
+process_mode = 3
+script = ExtResource("1_0u6qv")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 emitting = false
@@ -19,14 +23,21 @@ explosiveness = 0.75
 randomness = 0.35
 direction = Vector2(0, -1)
 spread = 10.0
-gravity = Vector2(0, 400)
+gravity = Vector2(0, 0)
 initial_velocity_min = 600.0
 initial_velocity_max = 900.0
 angular_velocity_min = -180.0
 angular_velocity_max = 180.0
+linear_accel_min = -100.0
+linear_accel_max = -82.82
+damping_min = 24.242
+damping_max = 70.707
 scale_amount_min = 0.05
 scale_amount_max = 0.2
 color = Color(1, 0.28, 0.28, 1)
 hue_variation_min = -0.53
 hue_variation_max = 0.48
 hue_variation_curve = SubResource("Curve_awcl5")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_0u0ad")

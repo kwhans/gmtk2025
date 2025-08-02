@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://p7hf0mywirjq"]
+[gd_scene load_steps=5 format=3 uid="uid://p7hf0mywirjq"]
 
+[ext_resource type="Script" uid="uid://myhlv4q2mq0d" path="res://celebration/firework.gd" id="1_2nib7"]
 [ext_resource type="Texture2D" uid="uid://b1pglobx54itc" path="res://celebration/star_09.png" id="1_skas4"]
+[ext_resource type="AudioStream" uid="uid://djgoadqwlrm8j" path="res://celebration/Pow.wav" id="3_ikhx5"]
 
 [sub_resource type="Curve" id="Curve_qthjg"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -8,6 +10,8 @@ _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [node name="Firework" type="Node2D"]
+process_mode = 3
+script = ExtResource("1_2nib7")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 emitting = false
@@ -18,9 +22,14 @@ one_shot = true
 explosiveness = 1.0
 direction = Vector2(0, 1)
 spread = 180.0
-gravity = Vector2(0, 240)
-initial_velocity_min = 400.0
-initial_velocity_max = 1200.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 500.0
 damping_max = 54.545
+scale_amount_min = 0.05
+scale_amount_max = 0.2
 color = Color(0, 1, 0.983333, 1)
 hue_variation_curve = SubResource("Curve_qthjg")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_ikhx5")

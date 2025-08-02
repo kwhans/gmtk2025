@@ -19,6 +19,11 @@ func _on_loop_marker_body_entered(_body: Node2D, markerNum: int) -> void:
 			nextMarker = 1
 		if markerNum == finalMarker:
 			lapCompleteSignal.emit()
+			#celebrate()
 		if markerNum == finalMarker - 1:
 			lapAlmostCompleteSignal.emit()
 	mostRecentMarker = markerNum
+
+func celebrate()->void:
+	$Confetti1.startEffect()
+	$Confetti2.startEffect()
