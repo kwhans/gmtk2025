@@ -5,7 +5,7 @@ extends CharacterBody2D
 @export var steerSpeedRps:float = 3.0;
 @export var speed:float = 900.0; # pixels per second
 @export var offRoadResist:float = 0.15
-@export var lapAcceleration:float = 0.05 # multiplier per lap completed
+@export var lapAcceleration:float = 0.12 # multiplier per lap completed
 @export var oilSlowdown:float = 0.5
 
 var lapsCompleted = 0

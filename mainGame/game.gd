@@ -21,12 +21,13 @@ var rockScene1 = preload("res://obstacles/Rock1.tscn")
 var rockScene2 = preload("res://obstacles/Rock2.tscn")
 var rockScene3 = preload("res://obstacles/Rock3.tscn")
 
-@export var spawnSafetyRadius:float = 600
 var lapsCompleted:int = 0
 
 # Game parameters
-var totalLapsToWin:int = 5
-var numberOfObstaclesToPlace:int = 10
+@export var spawnSafetyRadius:float = 600
+@export var totalLapsToWin:int = 5
+@export var numberOfObstaclesToPlace:int = 10
+@export var respawnAllGhosts:bool = false # if true all ghosts despawn each lap and one new ghost per lap is spawned
 
 func _input(_event: InputEvent) -> void:
 	pass
@@ -233,19 +234,23 @@ func getTotalLapsRequired() -> int:
 
 func _on_basic_track_lap_almost_complete_signal() -> void:
 	# remove previous lap ghosts
-	var allGhosts = get_tree().get_nodes_in_group("Ghosts")
-	for ghost in allGhosts:
-		if ghost is GhostCar:
-			ghost.despawn()
+	var thisWasLastLap:bool = lapsCompleted >= totalLapsToWin-1
+	if respawnAllGhosts or thisWasLastLap:
+		var allGhosts = get_tree().get_nodes_in_group("Ghosts")
+		for ghost in allGhosts:
+			if ghost is GhostCar:
+				ghost.despawn()
+			else:
+				ghost.queue_free()
+	if not thisWasLastLap:
+		if respawnAllGhosts:
+			# make a fresh batch of ghosts
+			for wayPt in lapStartWaypoints:
+				spawnGhostCar(wayPt)
 		else:
-			ghost.queue_free()
-			
+			# just add one more
+			spawnGhostCar()
 		
-	# skip making new ghosts if this was the last lap
-	if lapsCompleted < totalLapsToWin-1:
-		# make a fresh batch of ghosts
-		for wayPt in lapStartWaypoints:
-			spawnGhostCar(wayPt)
 	
 
 func _on_car_waypoint_signal() -> void:
