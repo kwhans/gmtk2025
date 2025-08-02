@@ -15,6 +15,10 @@ run/main_scene="uid://jkq2n2xu6tq"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[global_group]
+
+Obstacles=""
+
 [input]
 
 ui_left={
@@ -36,10 +40,14 @@ ui_right={
 
 [layer_names]
 
-2d_physics/layer_1="Layer 1"
+2d_physics/layer_1="Player"
 2d_physics/layer_2="Track"
 2d_physics/layer_3="Tires"
 2d_physics/layer_4="Oil"
+2d_physics/layer_5="Ghost"
+2d_physics/layer_6="Barrier"
+2d_physics/layer_7="Marker"
+2d_physics/layer_8="Obstacle"
 
 [rendering]
 

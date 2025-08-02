@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2sn8pne26iyf"]
+
+[ext_resource type="Texture2D" uid="uid://dwc7un8fbowuh" path="res://obstacles/barrier_white_race.png" id="1_r5wkl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gfude"]
+size = Vector2(206, 58)
+
+[node name="Wall" type="StaticBody2D" groups=["Obstacles"]]
+collision_layer = 128
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_r5wkl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_gfude")

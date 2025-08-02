@@ -4,11 +4,13 @@ extends CharacterBody2D
 var nextWaypoint:Waypoint = null
 var nextWaypointIdx:int = 0
 var millisAtStart:int = 0 # ms timestame that this car started
+var timeSkipMillis:int = 0 # ms ticks to skip forward so that we can skip to later laps
 var steerIntent:float = 0.0
 var speed:float = 0.0
 
 func _ready() -> void:
 	millisAtStart = Time.get_ticks_msec()
+	$WarpSound.play()
 		
 func _physics_process(delta: float) -> void:
 	if nextWaypoint == null:
@@ -17,13 +19,14 @@ func _physics_process(delta: float) -> void:
 		nextWaypoint = game.getWaypoint(nextWaypointIdx)
 		if nextWaypoint == null:
 			# if we don't know where we're going, just keep doing what we were doing
+			print("Couldn't find next waypoint! Looking for: ", nextWaypointIdx)
 			move_and_slide()
 			return
 		else:
 			nextWaypointIdx += 1 #line up our next destination
 	
 	#are we there yet?
-	var millisSinceStart = Time.get_ticks_msec() - millisAtStart
+	var millisSinceStart = Time.get_ticks_msec() - millisAtStart + timeSkipMillis
 	if millisSinceStart >= nextWaypoint.millisSinceStart:
 		# we should be there.  Sync up!
 		position = nextWaypoint.position
@@ -43,3 +46,10 @@ func _physics_process(delta: float) -> void:
 	velocity = Vector2.RIGHT.rotated(rotation) * speed
 	
 	move_and_slide()
+	
+func despawn()->void:
+	$WarpSound.play()
+	$AnimationPlayer.play("despawn")
+	
+func onDespawnComplete()->void:
+	queue_free()

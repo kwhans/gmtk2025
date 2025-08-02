@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c63ijka05dwmn"]
+[gd_scene load_steps=9 format=3 uid="uid://c63ijka05dwmn"]
 
 [ext_resource type="Script" uid="uid://cxlgahfmexswj" path="res://car/car.gd" id="1_dxy33"]
 [ext_resource type="Texture2D" uid="uid://bvklkkqa5gpq1" path="res://car/car_blue_3.png" id="2_hkabp"]
@@ -11,12 +11,16 @@ _data = [Vector2(0, 2.75281), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jpe8o"]
-size = Vector2(60, 116)
+size = Vector2(53, 109)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bkrhx"]
+size = Vector2(115, 59)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h3fet"]
 size = Vector2(20, 10)
 
 [node name="Car" type="CharacterBody2D"]
+collision_mask = 161
 script = ExtResource("1_dxy33")
 go = false
 speed = 1000.0
@@ -28,10 +32,17 @@ cameraSmoothingCurve = SubResource("Curve_jpe8o")
 rotation = 1.5708
 texture = ExtResource("2_hkabp")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(1, -1)
+[node name="PhysicsCollider" type="CollisionShape2D" parent="."]
+position = Vector2(1.4999, -0.499802)
 rotation = 1.5708
 shape = SubResource("RectangleShape2D_jpe8o")
+
+[node name="HitBox2D" type="Area2D" parent="."]
+collision_mask = 16
+
+[node name="HB_Collider" type="CollisionShape2D" parent="HitBox2D"]
+position = Vector2(-0.5, 0.5)
+shape = SubResource("RectangleShape2D_bkrhx")
 
 [node name="DriveSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_jpe8o")
@@ -75,4 +86,9 @@ collision_mask = 2
 position = Vector2(-32, -24)
 shape = SubResource("RectangleShape2D_h3fet")
 
+[node name="OilEffectTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="body_entered" from="HitBox2D" to="." method="_on_hit_box_2d_body_entered"]
 [connection signal="timeout" from="TurnSoundDelay" to="." method="_on_turn_sound_delay_timeout"]
