@@ -25,7 +25,7 @@ var lapsCompleted:int = 0
 
 # Game parameters
 @export var spawnSafetyRadius:float = 600
-@export var totalLapsToWin:int = 5
+@export var totalLapsToWin:int = 2
 @export var numberOfObstaclesToPlace:int = 10
 @export var respawnAllGhosts:bool = false # if true all ghosts despawn each lap and one new ghost per lap is spawned
 
@@ -199,14 +199,15 @@ func restartGame() -> void:
 	for obs in allObstacles:
 		obs.queue_free()
 		
-	# make new obstacles
-	placeAllObstacles()
-	
 	# Fix the car
 	$Car.go = false
 	$Car.position = carStartPos
 	$Car.rotation = carStartRotation
 	$Car.revive()
+	
+	# make new obstacles
+	placeAllObstacles()
+	%Instructions.reset()
 	
 	get_tree().paused = false
 	

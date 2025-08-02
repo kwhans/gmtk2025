@@ -1,0 +1,138 @@
+[gd_scene load_steps=11 format=3 uid="uid://d3ui1j5h76sgu"]
+
+[ext_resource type="Script" uid="uid://fyh57bb7in7d" path="res://dialog/instructions.gd" id="1_36tfp"]
+[ext_resource type="Texture2D" uid="uid://bvb4nv8ul06gs" path="res://dialog/keyboard_a_outline.png" id="1_yieme"]
+[ext_resource type="Texture2D" uid="uid://croh0tj0pd43q" path="res://dialog/keyboard_d_outline.png" id="2_36tfp"]
+[ext_resource type="Texture2D" uid="uid://bwb7ehi1o25j4" path="res://dialog/keyboard_arrow_left_outline.png" id="3_g2yph"]
+[ext_resource type="Texture2D" uid="uid://wuhfubr5gys5" path="res://dialog/keyboard_arrow_right_outline.png" id="4_d5c5m"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_il1hi"]
+font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_1al1w"]
+font_size = 24
+
+[sub_resource type="Animation" id="Animation_g2yph"]
+resource_name = "FadeOut"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_d5c5m"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_il1hi"]
+_data = {
+&"FadeOut": SubResource("Animation_g2yph"),
+&"RESET": SubResource("Animation_d5c5m")
+}
+
+[node name="Instructions" type="MarginContainer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -288.0
+offset_right = 288.0
+offset_bottom = 164.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+script = ExtResource("1_36tfp")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="ToSteerLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "To steer, press:"
+label_settings = SubResource("LabelSettings_il1hi")
+
+[node name="VBoxContainer" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="KeyA" type="TextureRect" parent="HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_yieme")
+
+[node name="KeyD" type="TextureRect" parent="HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_36tfp")
+
+[node name="OrLabel" type="Label" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "or"
+label_settings = SubResource("LabelSettings_1al1w")
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ArrowLeft" type="TextureRect" parent="HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_g2yph")
+
+[node name="ArrowRight" type="TextureRect" parent="HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("4_d5c5m")
+
+[node name="FadeOutTimer" type="Timer" parent="."]
+wait_time = 8.0
+one_shot = true
+autostart = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_il1hi")
+}
+
+[connection signal="timeout" from="FadeOutTimer" to="." method="_on_fade_out_timer_timeout"]

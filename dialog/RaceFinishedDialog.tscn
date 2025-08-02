@@ -4,11 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://c3wcsnqwvjr5x" path="res://dialog/green_panel.png" id="2_t7mp8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_84yht"]
-font_size = 128
+font_size = 64
 font_color = Color(0.122252, 0.122252, 0.122252, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_7t316"]
-font_size = 64
+font_size = 32
 font_color = Color(0.205117, 0.205117, 0.205117, 1)
 
 [node name="RaceFinishedDialog" type="Control"]
@@ -21,14 +21,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -250.0
-offset_right = 250.0
-offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_horizontal = 4
+size_flags_vertical = 4
 script = ExtResource("1_m1xnr")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
@@ -38,6 +34,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -71,7 +71,7 @@ horizontal_alignment = 1
 
 [node name="TotalTimeLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Total Time: 0.00 Sec"
 label_settings = SubResource("LabelSettings_7t316")
@@ -79,7 +79,7 @@ horizontal_alignment = 1
 
 [node name="BestLapLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Best Lap: 0.00 Sec"
 label_settings = SubResource("LabelSettings_7t316")
@@ -87,7 +87,7 @@ horizontal_alignment = 1
 
 [node name="WorstLapLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 text = "Worst Lap: 0.00 Sec"
 label_settings = SubResource("LabelSettings_7t316")
