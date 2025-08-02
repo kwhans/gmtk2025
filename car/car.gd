@@ -24,6 +24,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if not go:
 		$DriveSound.playing = false
+		$TurnSound.playing = false
 		return
 	if $DriveSound.playing == false:
 		$DriveSound.play()

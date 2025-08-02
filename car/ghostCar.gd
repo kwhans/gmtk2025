@@ -10,6 +10,7 @@ var speed:float = 0.0
 
 func _ready() -> void:
 	millisAtStart = Time.get_ticks_msec()
+	$WarpSound.play()
 		
 func _physics_process(delta: float) -> void:
 	if nextWaypoint == null:
@@ -45,3 +46,10 @@ func _physics_process(delta: float) -> void:
 	velocity = Vector2.RIGHT.rotated(rotation) * speed
 	
 	move_and_slide()
+	
+func despawn()->void:
+	$WarpSound.play()
+	$AnimationPlayer.play("despawn")
+	
+func onDespawnComplete()->void:
+	queue_free()

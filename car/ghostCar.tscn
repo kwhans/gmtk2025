@@ -1,26 +1,183 @@
-[gd_scene load_steps=5 format=3 uid="uid://c3wtk8cpx2kih"]
+[gd_scene load_steps=11 format=3 uid="uid://c3wtk8cpx2kih"]
 
 [ext_resource type="Script" uid="uid://ijb68qtwj6a1" path="res://car/ghostCar.gd" id="1_h437j"]
 [ext_resource type="Texture2D" uid="uid://btc4sknqv5he7" path="res://car/car_black_3.png" id="2_h437j"]
+[ext_resource type="Texture2D" uid="uid://bjieryq1ml8xm" path="res://car/portal.png" id="2_x5h3l"]
 [ext_resource type="AudioStream" uid="uid://4pbv5fhsv37m" path="res://car/drive.wav" id="3_85xei"]
+[ext_resource type="AudioStream" uid="uid://rwvsk7or21r4" path="res://car/WarpIn.wav" id="5_x5h3l"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jpe8o"]
 size = Vector2(60, 116)
 
+[sub_resource type="Animation" id="Animation_h437j"]
+resource_name = "spawn"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PortalSprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0.01, 0.006), Vector2(2.495, 1.5), Vector2(2.495, 1.5), Vector2(0.01, 0.006)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.01, 0.01), Vector2(0.01, 0.01), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PortalSprite:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.600613),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_x5h3l"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PortalSprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.495, 1.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PortalSprite:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_85xei"]
+resource_name = "despawn"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PortalSprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.6, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0.01, 0.006), Vector2(2.495, 1.5), Vector2(2.495, 1.5), Vector2(0.01, 0.006)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1), Vector2(0.01, 0.01)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PortalSprite:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.8),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"onDespawnComplete"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_aqw4i"]
+_data = {
+&"RESET": SubResource("Animation_x5h3l"),
+&"despawn": SubResource("Animation_85xei"),
+&"spawn": SubResource("Animation_h437j")
+}
+
 [node name="GhostCar" type="CharacterBody2D" groups=["Ghosts"]]
 collision_layer = 16
-collision_mask = 0
+collision_mask = 160
 script = ExtResource("1_h437j")
 
+[node name="PortalSprite" type="Sprite2D" parent="."]
+rotation = 1.5708
+scale = Vector2(2.495, 1.5)
+texture = ExtResource("2_x5h3l")
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
+show_behind_parent = true
+z_index = 1
+position = Vector2(0, -2.38419e-07)
 rotation = 1.5708
 texture = ExtResource("2_h437j")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(1, -1)
 rotation = 1.5708
 shape = SubResource("RectangleShape2D_jpe8o")
 
 [node name="DriveSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_85xei")
 autoplay = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_aqw4i")
+}
+autoplay = "spawn"
+
+[node name="WarpSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_x5h3l")

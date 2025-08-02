@@ -228,7 +228,11 @@ func _on_basic_track_lap_almost_complete_signal() -> void:
 	# remove previous lap ghosts
 	var allGhosts = get_tree().get_nodes_in_group("Ghosts")
 	for ghost in allGhosts:
-		ghost.queue_free()
+		if ghost is GhostCar:
+			ghost.despawn()
+		else:
+			ghost.queue_free()
+			
 		
 	# skip making new ghosts if this was the last lap
 	if lapsCompleted < totalLapsToWin-1:
