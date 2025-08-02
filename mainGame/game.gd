@@ -25,7 +25,7 @@ var lapsCompleted:int = 0
 
 # Game parameters
 @export var spawnSafetyRadius:float = 600
-@export var totalLapsToWin:int = 2
+@export var totalLapsToWin:int = 5
 @export var numberOfObstaclesToPlace:int = 10
 @export var respawnAllGhosts:bool = false # if true all ghosts despawn each lap and one new ghost per lap is spawned
 
@@ -209,6 +209,13 @@ func restartGame() -> void:
 	placeAllObstacles()
 	%Instructions.reset()
 	
+	# reset music
+	$SoundTrack0.stop()
+	$SoundTrack1.stop()
+	$SoundTrack2.stop()
+	$SoundTrack3.stop()
+	$MusicStartTimer.start()
+	
 	get_tree().paused = false
 	
 	startCountDownIdx = 0
@@ -324,3 +331,23 @@ func _on_firework_timer_2_timeout() -> void:
 
 func _on_firework_timer_3_timeout() -> void:
 	%Firework3.startEffect()
+
+
+func _on_sound_track_finished() -> void:
+	playARandomSoundTrack()
+
+func playARandomSoundTrack()->void:
+	var pick = randi() % 4
+	match pick:
+		0:
+			$SoundTrack0.play()
+		1:
+			$SoundTrack1.play()
+		2:
+			$SoundTrack2.play()
+		3:
+			$SoundTrack3.play()
+
+
+func _on_music_start_timer_timeout() -> void:
+	playARandomSoundTrack()

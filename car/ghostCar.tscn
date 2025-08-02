@@ -172,6 +172,7 @@ shape = SubResource("RectangleShape2D_jpe8o")
 [node name="DriveSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_85xei")
 autoplay = true
+bus = &"Effects"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -181,3 +182,4 @@ autoplay = "spawn"
 
 [node name="WarpSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("5_x5h3l")
+bus = &"Effects"

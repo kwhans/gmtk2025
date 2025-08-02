@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=15 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
@@ -10,6 +10,9 @@
 [ext_resource type="AudioStream" uid="uid://c702salwdox34" path="res://mainGame/Ready.wav" id="6_53jny"]
 [ext_resource type="PackedScene" uid="uid://p7hf0mywirjq" path="res://celebration/Firework.tscn" id="6_h25en"]
 [ext_resource type="PackedScene" uid="uid://d3ui1j5h76sgu" path="res://dialog/Instructions.tscn" id="7_ntmy5"]
+[ext_resource type="AudioStream" uid="uid://ctlkvty0pldwr" path="res://mainGame/80s Circuit City Main.wav" id="11_umea6"]
+[ext_resource type="AudioStream" uid="uid://bhgaw7fn6wom7" path="res://mainGame/80s Soiree Main.wav" id="12_hripa"]
+[ext_resource type="AudioStream" uid="uid://btf8cdl3odvn4" path="res://mainGame/Electronic Vol5 Pump Main.wav" id="13_ecsr8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_feb5d"]
 font_size = 64
@@ -53,14 +56,17 @@ autostart = true
 [node name="CountSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_53jny")
 volume_db = -18.739
+bus = &"Effects"
 
 [node name="GoSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_1nfcf")
 volume_db = -17.802
+bus = &"Effects"
 
 [node name="ReadySound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_53jny")
 volume_db = -14.991
+bus = &"Effects"
 
 [node name="SpawnGhostTimer" type="Timer" parent="."]
 wait_time = 2.0
@@ -134,6 +140,31 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
+[node name="SoundTrack0" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("11_umea6")
+bus = &"SoundTrack"
+
+[node name="SoundTrack1" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("12_hripa")
+bus = &"SoundTrack"
+
+[node name="SoundTrack2" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("13_ecsr8")
+bus = &"SoundTrack"
+
+[node name="SoundTrack3" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("11_umea6")
+bus = &"SoundTrack"
+
+[node name="MusicStartTimer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+autostart = true
+
 [connection signal="lapAlmostCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_almost_complete_signal"]
 [connection signal="lapCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_complete_signal"]
 [connection signal="waypointSignal" from="Car" to="." method="_on_car_waypoint_signal"]
@@ -148,3 +179,8 @@ layout_mode = 2
 [connection signal="timeout" from="FireworkTimer3" to="." method="_on_firework_timer_3_timeout"]
 [connection signal="restartGameSignal" from="UI/CenterContainer/GameOverDialog" to="." method="_on_game_over_dialog_restart_game_signal"]
 [connection signal="nextRaceSignal" from="UI/CenterContainer/RaceFinishedDialog" to="." method="_on_race_finished_dialog_next_race_signal"]
+[connection signal="finished" from="SoundTrack0" to="." method="_on_sound_track_finished"]
+[connection signal="finished" from="SoundTrack1" to="." method="_on_sound_track_finished"]
+[connection signal="finished" from="SoundTrack2" to="." method="_on_sound_track_finished"]
+[connection signal="finished" from="SoundTrack3" to="." method="_on_sound_track_finished"]
+[connection signal="timeout" from="MusicStartTimer" to="." method="_on_music_start_timer_timeout"]
