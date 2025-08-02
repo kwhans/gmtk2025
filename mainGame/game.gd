@@ -22,10 +22,11 @@ var rockScene2 = preload("res://obstacles/Rock2.tscn")
 var rockScene3 = preload("res://obstacles/Rock3.tscn")
 
 var lapsCompleted:int = 0
+var currentTrack:int = 0;
 
 # Game parameters
 @export var spawnSafetyRadius:float = 600
-@export var totalLapsToWin:int = 5
+@export var totalLapsToWin:int = 1
 @export var numberOfObstaclesToPlace:int = 10
 @export var respawnAllGhosts:bool = false # if true all ghosts despawn each lap and one new ghost per lap is spawned
 
@@ -39,6 +40,12 @@ func _ready() -> void:
 	carStartRotation = $Car.rotation
 	carStartSpeed = $Car.speed
 	placeAllObstacles()
+
+func getCurrentTrack() -> RaceTrack:
+	if currentTrack == 0:
+		return $BasicTrack
+	else:
+		return $BowTieTrack
 
 func _on_start_count_down_timer_timeout() -> void:
 	if startCountDownIdx < startCountDownMessages.size():
@@ -151,19 +158,19 @@ func createRandomObstacle() -> Node2D:
 	return oilSpillScene.instantiate()
 
 func placeRandomObstacle() -> void:
-	var tiles:Array[Vector2i] = $BasicTrack.getTrackTiles()
+	var tiles:Array[Vector2i] = getCurrentTrack().getTrackTiles()
 	var targetPosition:Vector2
 	var goodTarget:bool = false
 	while !goodTarget: #keep the oil from spawning right in front of the car
 		var randomTile = tiles.pick_random()
-		targetPosition = (randomTile * 128.0) + Vector2(randf_range(0,128),randf_range(0,128)) - $BasicTrack.position
+		targetPosition = (randomTile * 128.0) + Vector2(randf_range(0,128),randf_range(0,128)) - getCurrentTrack().position
 		goodTarget = targetPosition.distance_to($Car.position) > spawnSafetyRadius
 		#print_debug("recalculated position")
 		
 	var newNode:Node2D = createRandomObstacle()
 	newNode.position = targetPosition
 	newNode.rotation = randf_range(0, TAU)
-	$BasicTrack.add_child(newNode)
+	getCurrentTrack().add_child(newNode)
 	
 func _on_oil_timer_timeout() -> void:
 	placeRandomObstacle()
@@ -177,12 +184,17 @@ func doGameOver() -> void:
 	get_tree().paused = true
 	$GameOverTimer.start()
 
-func restartGame() -> void:
+func restartGame(changeTrack:bool) -> void:
 	#$SpawnGhostTimer.stop() # just in case we did a reset without a game over
 	
 	%GameOverDialog.visible = false
 	%RaceFinishedDialog.visible = false
 	print("Restarting game...")
+	
+	if changeTrack:
+		switchTracks()
+	else:
+		%Instructions.reset()
 	
 	lapsCompleted = 0
 	
@@ -201,13 +213,12 @@ func restartGame() -> void:
 		
 	# Fix the car
 	$Car.go = false
-	$Car.position = carStartPos
-	$Car.rotation = carStartRotation
+	$Car.global_position = getCurrentTrack().getStartGlobalPosition()
+	$Car.global_rotation = getCurrentTrack().getStartGlobalRotation()
 	$Car.revive()
 	
 	# make new obstacles
 	placeAllObstacles()
-	%Instructions.reset()
 	
 	# reset music
 	$SoundTrack0.stop()
@@ -226,7 +237,7 @@ func _on_game_over_timer_timeout() -> void:
 	%GameOverDialog.visible = true
 
 
-func _on_basic_track_lap_complete_signal() -> void:
+func _on_track_lap_complete_signal() -> void:
 	recordWaypoint(true) # this has to come before incrementing lapsCompleted or else it stops recording before the last one
 	lapsCompleted += 1
 	%GameOverDialog.updateLabel(lapsCompleted,totalLapsToWin)
@@ -240,7 +251,7 @@ func getLapsCompleted() -> int:
 func getTotalLapsRequired() -> int:
 	return totalLapsToWin
 
-func _on_basic_track_lap_almost_complete_signal() -> void:
+func _on_track_lap_almost_complete_signal() -> void:
 	# remove previous lap ghosts
 	var thisWasLastLap:bool = lapsCompleted >= totalLapsToWin-1
 	if respawnAllGhosts or thisWasLastLap:
@@ -259,15 +270,13 @@ func _on_basic_track_lap_almost_complete_signal() -> void:
 			# just add one more
 			spawnGhostCar()
 		
-	
-
 func _on_car_waypoint_signal() -> void:
 	recordWaypoint(false)
 
 func finishRace() -> void:
 	#get_tree().paused = true
 	celebrate() # start the firework countdown
-	$BasicTrack.celebrate() # fire off the confetti
+	getCurrentTrack().celebrate() # fire off the confetti
 	$GameWinPauseTimer.start()
 	$GameWinTimer.start()
 
@@ -305,11 +314,10 @@ func _on_game_win_timer_timeout() -> void:
 	%RaceFinishedDialog.visible = true
 
 func _on_game_over_dialog_restart_game_signal() -> void:
-	restartGame()
+	restartGame(false)
 
 func _on_race_finished_dialog_next_race_signal() -> void:
-	# TODO load next level
-	restartGame()
+	restartGame(true)
 
 func _on_game_win_pause_timer_timeout() -> void:
 	get_tree().paused = true
@@ -351,3 +359,18 @@ func playARandomSoundTrack()->void:
 
 func _on_music_start_timer_timeout() -> void:
 	playARandomSoundTrack()
+
+func switchTracks():
+	currentTrack = (currentTrack + 1) % 2
+	if currentTrack == 0:
+		totalLapsToWin = 5
+		$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
+		$BasicTrack.visible = true
+		$BowTieTrack.visible = false
+		$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
+	else:
+		totalLapsToWin = 10
+		$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
+		$BowTieTrack.visible = true
+		$BasicTrack.visible = false
+		$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED

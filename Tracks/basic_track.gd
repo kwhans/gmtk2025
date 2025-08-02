@@ -1,4 +1,6 @@
 extends Node2D
+class_name RaceTrack
+
 func getTrackTiles() -> Array[Vector2i]:
 	return $TileMapLayer2.get_used_cells()
 
@@ -27,3 +29,10 @@ func _on_loop_marker_body_entered(_body: Node2D, markerNum: int) -> void:
 func celebrate()->void:
 	$Confetti1.startEffect()
 	$Confetti2.startEffect()
+	
+func getStartGlobalPosition() -> Vector2:
+	return $StartPosition.global_position
+
+func getStartGlobalRotation() -> float:
+	return $StartPosition.global_rotation
+	

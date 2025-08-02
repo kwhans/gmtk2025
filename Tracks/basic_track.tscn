@@ -85,6 +85,9 @@ rotation = 2.0944
 position = Vector2(1471, 1024)
 rotation = 1.0472
 
+[node name="StartPosition" type="Node2D" parent="."]
+position = Vector2(1344, 832)
+
 [connection signal="body_entered" from="LoopMarker1" to="." method="_on_loop_marker_body_entered" binds= [1]]
 [connection signal="body_entered" from="LoopMarker2" to="." method="_on_loop_marker_body_entered" binds= [2]]
 [connection signal="body_entered" from="LoopMarker3" to="." method="_on_loop_marker_body_entered" binds= [3]]

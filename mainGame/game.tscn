@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=16 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
 [ext_resource type="PackedScene" uid="uid://47aacx1x23h0" path="res://Tracks/basic_track.tscn" id="2_53jny"]
 [ext_resource type="AudioStream" uid="uid://1rjoaov6w52v" path="res://mainGame/Dial.wav" id="3_53jny"]
+[ext_resource type="PackedScene" uid="uid://dnkxowk27bu70" path="res://Tracks/BowTieTrack.tscn" id="3_hripa"]
 [ext_resource type="AudioStream" uid="uid://yf0m51d1kspe" path="res://mainGame/DialGo.wav" id="4_1nfcf"]
 [ext_resource type="PackedScene" uid="uid://dmmqvslef4a1s" path="res://dialog/GameOverDialog.tscn" id="4_p1h4l"]
 [ext_resource type="PackedScene" uid="uid://dgndretdd7f5n" path="res://dialog/RaceFinishedDialog.tscn" id="5_p1h4l"]
@@ -21,6 +22,10 @@ font_size = 64
 script = ExtResource("1_o6bt6")
 
 [node name="BasicTrack" parent="." instance=ExtResource("2_53jny")]
+
+[node name="BowTieTrack" parent="." instance=ExtResource("3_hripa")]
+process_mode = 4
+visible = false
 
 [node name="Car" parent="." instance=ExtResource("2_38t2v")]
 position = Vector2(1337, 831)
@@ -165,8 +170,10 @@ wait_time = 10.0
 one_shot = true
 autostart = true
 
-[connection signal="lapAlmostCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_almost_complete_signal"]
-[connection signal="lapCompleteSignal" from="BasicTrack" to="." method="_on_basic_track_lap_complete_signal"]
+[connection signal="lapAlmostCompleteSignal" from="BasicTrack" to="." method="_on_track_lap_almost_complete_signal"]
+[connection signal="lapCompleteSignal" from="BasicTrack" to="." method="_on_track_lap_complete_signal"]
+[connection signal="lapAlmostCompleteSignal" from="BowTieTrack" to="." method="_on_track_lap_almost_complete_signal"]
+[connection signal="lapCompleteSignal" from="BowTieTrack" to="." method="_on_track_lap_complete_signal"]
 [connection signal="waypointSignal" from="Car" to="." method="_on_car_waypoint_signal"]
 [connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
 [connection signal="timeout" from="SpawnGhostTimer" to="." method="_on_spawn_ghost_timer_timeout"]
