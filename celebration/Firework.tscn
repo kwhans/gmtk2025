@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://p7hf0mywirjq"]
+
+[ext_resource type="Texture2D" uid="uid://b1pglobx54itc" path="res://celebration/star_09.png" id="1_skas4"]
+
+[sub_resource type="Curve" id="Curve_qthjg"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="Firework" type="Node2D"]
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 64
+texture = ExtResource("1_skas4")
+lifetime = 3.0
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, 1)
+spread = 180.0
+gravity = Vector2(0, 240)
+initial_velocity_min = 400.0
+initial_velocity_max = 1200.0
+damping_max = 54.545
+color = Color(0, 1, 0.983333, 1)
+hue_variation_curve = SubResource("Curve_qthjg")
