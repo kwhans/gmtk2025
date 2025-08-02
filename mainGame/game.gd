@@ -29,6 +29,8 @@ var currentTrack:int = 0;
 @export var totalLapsToWin:int = 1
 @export var numberOfObstaclesToPlace:int = 10
 @export var respawnAllGhosts:bool = false # if true all ghosts despawn each lap and one new ghost per lap is spawned
+@export var spawnGhostsAhead:bool = true
+@export var spawnGhostsBehind:bool = false
 
 func _input(_event: InputEvent) -> void:
 	pass
@@ -253,22 +255,25 @@ func getTotalLapsRequired() -> int:
 
 func _on_track_lap_almost_complete_signal() -> void:
 	# remove previous lap ghosts
+	var thisWillBeLastLap:bool = lapsCompleted == totalLapsToWin-2
 	var thisWasLastLap:bool = lapsCompleted >= totalLapsToWin-1
-	if respawnAllGhosts or thisWasLastLap:
+	if respawnAllGhosts or thisWasLastLap or (thisWillBeLastLap and spawnGhostsAhead):
 		var allGhosts = get_tree().get_nodes_in_group("Ghosts")
 		for ghost in allGhosts:
 			if ghost is GhostCar:
 				ghost.despawn()
 			else:
 				ghost.queue_free()
-	if not thisWasLastLap:
-		if respawnAllGhosts:
-			# make a fresh batch of ghosts
-			for wayPt in lapStartWaypoints:
-				spawnGhostCar(wayPt)
-		else:
-			# just add one more
-			spawnGhostCar()
+	if thisWasLastLap or not spawnGhostsAhead:
+		return
+
+	if respawnAllGhosts or thisWillBeLastLap:
+		# make a fresh batch of ghosts
+		for wayPt in lapStartWaypoints:
+			spawnGhostCar(wayPt)
+	else:
+		# just add one more
+		spawnGhostCar()
 		
 func _on_car_waypoint_signal() -> void:
 	recordWaypoint(false)
@@ -323,7 +328,7 @@ func _on_game_win_pause_timer_timeout() -> void:
 	get_tree().paused = true
 
 func celebrate()->void:
-	# TODO add a cheering sound
+	playARandomCheerSound()
 	$FireworkTimer1.start()
 	$FireworkTimer2.start()
 	$FireworkTimer3.start()
@@ -363,14 +368,62 @@ func _on_music_start_timer_timeout() -> void:
 func switchTracks():
 	currentTrack = (currentTrack + 1) % 2
 	if currentTrack == 0:
-		totalLapsToWin = 5
+		$Car.lapAcceleration = 0.12
+		totalLapsToWin = 4
+		spawnGhostsAhead = true
+		spawnGhostsBehind = false
 		$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
 		$BasicTrack.visible = true
 		$BowTieTrack.visible = false
 		$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
 	else:
-		totalLapsToWin = 10
+		$Car.lapAcceleration = 0.0
+		totalLapsToWin = 4
+		spawnGhostsAhead = false
+		spawnGhostsBehind = true
 		$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
 		$BowTieTrack.visible = true
 		$BasicTrack.visible = false
 		$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _on_track_lap_just_started() -> void:
+	var thisIsFirstLap:bool = lapsCompleted == 0
+	if thisIsFirstLap or not spawnGhostsBehind:
+		return
+		
+	var thisIsLastLap:bool = lapsCompleted == totalLapsToWin-1
+	var raceIsFinished:bool = lapsCompleted >= totalLapsToWin
+	
+	if respawnAllGhosts or thisIsLastLap or raceIsFinished:
+		# remove previous lap ghosts
+		var allGhosts = get_tree().get_nodes_in_group("Ghosts")
+		for ghost in allGhosts:
+			if ghost is GhostCar:
+				ghost.despawn()
+			else:
+				ghost.queue_free()
+				
+		if raceIsFinished:
+			return
+			
+		# make a fresh batch of ghosts
+		var ghostCount = lapStartWaypoints.size()-1 # don't count most recent start (we just started it)
+		for i in range(ghostCount):
+			var wayPt = lapStartWaypoints[i]
+			spawnGhostCar(wayPt)
+	else:
+		# just add one more
+		spawnGhostCar()
+
+func playARandomCheerSound()->void:
+	var pick = randi() % 3
+	match pick:
+		0:
+			$CheerSound0.play()
+		1:
+			$CheerSound1.play()
+		2: 
+			$CheerSound2.play()
+		_:
+			$CheerSound0.play()

@@ -10,6 +10,7 @@ var nextMarker:int = 1
 
 signal lapCompleteSignal
 signal lapAlmostCompleteSignal
+signal lapJustStarted
 
 func _on_loop_marker_body_entered(_body: Node2D, markerNum: int) -> void:
 	#print("Hit loop marker ", markerNum)
@@ -21,7 +22,8 @@ func _on_loop_marker_body_entered(_body: Node2D, markerNum: int) -> void:
 			nextMarker = 1
 		if markerNum == finalMarker:
 			lapCompleteSignal.emit()
-			#celebrate()
+		if markerNum == 1:
+			lapJustStarted.emit()
 		if markerNum == finalMarker - 1:
 			lapAlmostCompleteSignal.emit()
 	mostRecentMarker = markerNum

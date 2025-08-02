@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=19 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
@@ -14,6 +14,9 @@
 [ext_resource type="AudioStream" uid="uid://ctlkvty0pldwr" path="res://mainGame/80s Circuit City Main.wav" id="11_umea6"]
 [ext_resource type="AudioStream" uid="uid://bhgaw7fn6wom7" path="res://mainGame/80s Soiree Main.wav" id="12_hripa"]
 [ext_resource type="AudioStream" uid="uid://btf8cdl3odvn4" path="res://mainGame/Electronic Vol5 Pump Main.wav" id="13_ecsr8"]
+[ext_resource type="AudioStream" uid="uid://cjdejj1evj7l8" path="res://mainGame/Cheering.wav" id="15_p5usv"]
+[ext_resource type="AudioStream" uid="uid://ble4x3p51sp6t" path="res://mainGame/Cheering2.wav" id="16_ao08j"]
+[ext_resource type="AudioStream" uid="uid://cct2w5vpmt80j" path="res://mainGame/Cheering3.wav" id="17_584pb"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_feb5d"]
 font_size = 64
@@ -170,10 +173,27 @@ wait_time = 10.0
 one_shot = true
 autostart = true
 
+[node name="CheerSound0" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("17_584pb")
+bus = &"Effects"
+
+[node name="CheerSound1" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("15_p5usv")
+bus = &"Effects"
+
+[node name="CheerSound2" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("16_ao08j")
+bus = &"Effects"
+
 [connection signal="lapAlmostCompleteSignal" from="BasicTrack" to="." method="_on_track_lap_almost_complete_signal"]
 [connection signal="lapCompleteSignal" from="BasicTrack" to="." method="_on_track_lap_complete_signal"]
+[connection signal="lapJustStarted" from="BasicTrack" to="." method="_on_track_lap_just_started"]
 [connection signal="lapAlmostCompleteSignal" from="BowTieTrack" to="." method="_on_track_lap_almost_complete_signal"]
 [connection signal="lapCompleteSignal" from="BowTieTrack" to="." method="_on_track_lap_complete_signal"]
+[connection signal="lapJustStarted" from="BowTieTrack" to="." method="_on_track_lap_just_started"]
 [connection signal="waypointSignal" from="Car" to="." method="_on_car_waypoint_signal"]
 [connection signal="timeout" from="StartCountDownTimer" to="." method="_on_start_count_down_timer_timeout"]
 [connection signal="timeout" from="SpawnGhostTimer" to="." method="_on_spawn_ghost_timer_timeout"]
