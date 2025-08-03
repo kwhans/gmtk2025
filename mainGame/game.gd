@@ -32,8 +32,9 @@ var currentTrack:int = 0;
 @export var spawnGhostsAhead:bool = true
 @export var spawnGhostsBehind:bool = false
 
-func _input(_event: InputEvent) -> void:
-	pass
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_page_up"):
+		restartGame(true)
 	#if event.is_action("ui_accept"):
 	#	celebrate()
 
@@ -41,10 +42,11 @@ func _ready() -> void:
 	carStartPos = $Car.position
 	carStartRotation = $Car.rotation
 	carStartSpeed = $Car.speed
+	%LapCounter.updateLabel(lapsCompleted, totalLapsToWin)
 	placeAllObstacles()
 
 func getCurrentTrack() -> RaceTrack:
-	if currentTrack == 0:
+	if currentTrack % 2 == 0:
 		return $BasicTrack
 	else:
 		return $BowTieTrack
@@ -53,6 +55,7 @@ func _on_start_count_down_timer_timeout() -> void:
 	if startCountDownIdx < startCountDownMessages.size():
 		%NarrationLabel.text = startCountDownMessages[startCountDownIdx]
 		%NarrationLabel.visible = true
+		%LevelNameLabel.visible = true
 		startCountDownIdx += 1
 		if startCountDownIdx == startCountDownMessages.size():
 			$Car.go = true
@@ -67,6 +70,7 @@ func _on_start_count_down_timer_timeout() -> void:
 	else:
 		$StartCountDownTimer.stop()
 		%NarrationLabel.visible = false
+		%LevelNameLabel.visible = false
 
 func recordWaypoint(isNewLap:bool) -> void:
 	if lapsCompleted >= totalLapsToWin:
@@ -199,6 +203,7 @@ func restartGame(changeTrack:bool) -> void:
 		%Instructions.reset()
 	
 	lapsCompleted = 0
+	%LapCounter.updateLabel(lapsCompleted, totalLapsToWin)
 	
 	# clear ghosts and waypoints
 	var allGhosts = get_tree().get_nodes_in_group("Ghosts")
@@ -242,6 +247,7 @@ func _on_game_over_timer_timeout() -> void:
 func _on_track_lap_complete_signal() -> void:
 	recordWaypoint(true) # this has to come before incrementing lapsCompleted or else it stops recording before the last one
 	lapsCompleted += 1
+	%LapCounter.updateLabel(lapsCompleted, totalLapsToWin)
 	%GameOverDialog.updateLabel(lapsCompleted,totalLapsToWin)
 	$Car.lapsCompleted = lapsCompleted
 	if lapsCompleted >= totalLapsToWin:
@@ -366,26 +372,51 @@ func _on_music_start_timer_timeout() -> void:
 	playARandomSoundTrack()
 
 func switchTracks():
-	currentTrack = (currentTrack + 1) % 2
+	currentTrack = (currentTrack + 1) % 4
 	if currentTrack == 0:
+		%LevelNameLabel.text = "Race 1: A Drive Through The Loop"
 		$Car.lapAcceleration = 0.12
 		totalLapsToWin = 4
 		spawnGhostsAhead = true
 		spawnGhostsBehind = false
+		respawnAllGhosts = false
 		$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
 		$BasicTrack.visible = true
 		$BowTieTrack.visible = false
 		$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
-	else:
-		$Car.lapAcceleration = 0.0
+	elif currentTrack == 1:
+		%LevelNameLabel.text = "Race 2: Stay Out Of The Passing Lane"
+		$Car.lapAcceleration = -0.1
 		totalLapsToWin = 4
 		spawnGhostsAhead = false
 		spawnGhostsBehind = true
+		respawnAllGhosts = false
 		$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
 		$BowTieTrack.visible = true
 		$BasicTrack.visible = false
 		$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
-
+	elif currentTrack == 2:
+		%LevelNameLabel.text = "Race 3: Sandwiched"
+		$Car.lapAcceleration = 0.0
+		totalLapsToWin = 4
+		spawnGhostsAhead = true
+		spawnGhostsBehind = true
+		respawnAllGhosts = false
+		$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
+		$BasicTrack.visible = true
+		$BowTieTrack.visible = false
+		$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
+	elif currentTrack == 3:
+		%LevelNameLabel.text = "Race 4: The Wolf Pack"
+		$Car.lapAcceleration = 0.0
+		totalLapsToWin = 4
+		spawnGhostsAhead = true
+		spawnGhostsBehind = true
+		respawnAllGhosts = true
+		$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
+		$BowTieTrack.visible = true
+		$BasicTrack.visible = false
+		$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
 
 func _on_track_lap_just_started() -> void:
 	var thisIsFirstLap:bool = lapsCompleted == 0
@@ -396,13 +427,14 @@ func _on_track_lap_just_started() -> void:
 	var raceIsFinished:bool = lapsCompleted >= totalLapsToWin
 	
 	if respawnAllGhosts or thisIsLastLap or raceIsFinished:
-		# remove previous lap ghosts
-		var allGhosts = get_tree().get_nodes_in_group("Ghosts")
-		for ghost in allGhosts:
-			if ghost is GhostCar:
-				ghost.despawn()
-			else:
-				ghost.queue_free()
+		if (spawnGhostsBehind != spawnGhostsAhead) or raceIsFinished:
+			# remove previous lap ghosts
+			var allGhosts = get_tree().get_nodes_in_group("Ghosts")
+			for ghost in allGhosts:
+				if ghost is GhostCar:
+					ghost.despawn()
+				else:
+					ghost.queue_free()
 				
 		if raceIsFinished:
 			return

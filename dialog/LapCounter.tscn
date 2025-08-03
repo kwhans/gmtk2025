@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://c71jllfvq6it7"]
+
+[ext_resource type="Script" uid="uid://wck5xhcad4yc" path="res://dialog/lap_counter.gd" id="1_3vrlf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7e4tk"]
+font_size = 24
+
+[node name="LapCounter" type="MarginContainer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -363.0
+offset_top = -134.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+script = ExtResource("1_3vrlf")
+
+[node name="LapCountLabel" type="Label" parent="."]
+layout_mode = 2
+text = "Laps Completed: 0 / 10"
+label_settings = SubResource("LabelSettings_7e4tk")
