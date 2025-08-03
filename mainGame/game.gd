@@ -26,11 +26,12 @@ var currentTrack:int = 0;
 
 # Game parameters
 @export var spawnSafetyRadius:float = 600
-@export var totalLapsToWin:int = 1
+@export var totalLapsToWin:int = 8
 @export var numberOfObstaclesToPlace:int = 10
 @export var respawnAllGhosts:bool = false # if true all ghosts despawn each lap and one new ghost per lap is spawned
 @export var spawnGhostsAhead:bool = true
 @export var spawnGhostsBehind:bool = false
+const NUMBER_OF_LEVELS = 4
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_page_up"):
@@ -116,6 +117,7 @@ func spawnGhostCar(startingWaypointIdx:int=0) -> void:
 
 
 func _on_spawn_ghost_timer_timeout() -> void:
+	$WarpSound.play()
 	spawnGhostCar()
 
 func applyOdds(remainingOdds:int, nextOdds:int) -> int:
@@ -195,6 +197,7 @@ func restartGame(changeTrack:bool) -> void:
 	
 	%GameOverDialog.visible = false
 	%RaceFinishedDialog.visible = false
+	%WinnerDialog.visible = false
 	print("Restarting game...")
 	
 	if changeTrack:
@@ -265,6 +268,8 @@ func _on_track_lap_almost_complete_signal() -> void:
 	var thisWasLastLap:bool = lapsCompleted >= totalLapsToWin-1
 	if respawnAllGhosts or thisWasLastLap or (thisWillBeLastLap and spawnGhostsAhead):
 		var allGhosts = get_tree().get_nodes_in_group("Ghosts")
+		if allGhosts.size() > 0:
+			$WarpSound.play()
 		for ghost in allGhosts:
 			if ghost is GhostCar:
 				ghost.despawn()
@@ -275,10 +280,13 @@ func _on_track_lap_almost_complete_signal() -> void:
 
 	if respawnAllGhosts or thisWillBeLastLap:
 		# make a fresh batch of ghosts
+		if lapStartWaypoints.size() > 0:
+			$WarpSound.play()
 		for wayPt in lapStartWaypoints:
 			spawnGhostCar(wayPt)
 	else:
 		# just add one more
+		$WarpSound.play()
 		spawnGhostCar()
 		
 func _on_car_waypoint_signal() -> void:
@@ -328,7 +336,11 @@ func _on_game_over_dialog_restart_game_signal() -> void:
 	restartGame(false)
 
 func _on_race_finished_dialog_next_race_signal() -> void:
-	restartGame(true)
+	if currentTrack == NUMBER_OF_LEVELS - 1:
+		%RaceFinishedDialog.visible = false
+		%WinnerDialog.visible = true
+	else:
+		restartGame(true)
 
 func _on_game_win_pause_timer_timeout() -> void:
 	get_tree().paused = true
@@ -372,52 +384,64 @@ func _on_music_start_timer_timeout() -> void:
 	playARandomSoundTrack()
 
 func switchTracks():
-	currentTrack = (currentTrack + 1) % 4
-	if currentTrack == 0:
-		%LevelNameLabel.text = "Race 1: A Drive Through The Loop"
-		$Car.lapAcceleration = 0.12
-		totalLapsToWin = 4
-		spawnGhostsAhead = true
-		spawnGhostsBehind = false
-		respawnAllGhosts = false
-		$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
-		$BasicTrack.visible = true
-		$BowTieTrack.visible = false
-		$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
-	elif currentTrack == 1:
-		%LevelNameLabel.text = "Race 2: Stay Out Of The Passing Lane"
-		$Car.lapAcceleration = -0.1
-		totalLapsToWin = 4
-		spawnGhostsAhead = false
-		spawnGhostsBehind = true
-		respawnAllGhosts = false
-		$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
-		$BowTieTrack.visible = true
-		$BasicTrack.visible = false
-		$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
-	elif currentTrack == 2:
-		%LevelNameLabel.text = "Race 3: Sandwiched"
-		$Car.lapAcceleration = 0.0
-		totalLapsToWin = 4
-		spawnGhostsAhead = true
-		spawnGhostsBehind = true
-		respawnAllGhosts = false
-		$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
-		$BasicTrack.visible = true
-		$BowTieTrack.visible = false
-		$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
-	elif currentTrack == 3:
-		%LevelNameLabel.text = "Race 4: The Wolf Pack"
-		$Car.lapAcceleration = 0.0
-		totalLapsToWin = 4
-		spawnGhostsAhead = true
-		spawnGhostsBehind = true
-		respawnAllGhosts = true
-		$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
-		$BowTieTrack.visible = true
-		$BasicTrack.visible = false
-		$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
-
+	currentTrack = (currentTrack + 1) % NUMBER_OF_LEVELS
+	match currentTrack:
+		0:
+			%LevelNameLabel.text = "Race 1: A Drive Through The Loop"
+			$Car.lapAcceleration = 0.12
+			totalLapsToWin = 8
+			spawnGhostsAhead = true
+			spawnGhostsBehind = false
+			respawnAllGhosts = false
+			$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
+			$BasicTrack.visible = true
+			$BowTieTrack.visible = false
+			$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
+		1:
+			%LevelNameLabel.text = "Race 2: Stay Out Of The Passing Lane"
+			$Car.lapAcceleration = -0.1
+			totalLapsToWin = 8
+			spawnGhostsAhead = false
+			spawnGhostsBehind = true
+			respawnAllGhosts = false
+			$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
+			$BowTieTrack.visible = true
+			$BasicTrack.visible = false
+			$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
+		2:
+			%LevelNameLabel.text = "Race 3: Sandwiched"
+			$Car.lapAcceleration = 0.0
+			totalLapsToWin = 8
+			spawnGhostsAhead = true
+			spawnGhostsBehind = true
+			respawnAllGhosts = false
+			$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
+			$BasicTrack.visible = true
+			$BowTieTrack.visible = false
+			$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
+		3:
+			%LevelNameLabel.text = "Race 4: The Wolf Pack"
+			$Car.lapAcceleration = 0.0
+			totalLapsToWin = 8
+			spawnGhostsAhead = true
+			spawnGhostsBehind = true
+			respawnAllGhosts = true
+			$BowTieTrack.process_mode = Node.PROCESS_MODE_INHERIT
+			$BowTieTrack.visible = true
+			$BasicTrack.visible = false
+			$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
+		_:
+			%LevelNameLabel.text = "Race 1: A Drive Through The Loop"
+			$Car.lapAcceleration = 0.12
+			totalLapsToWin = 8
+			spawnGhostsAhead = true
+			spawnGhostsBehind = false
+			respawnAllGhosts = false
+			$BasicTrack.process_mode = Node.PROCESS_MODE_INHERIT
+			$BasicTrack.visible = true
+			$BowTieTrack.visible = false
+			$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
+			
 func _on_track_lap_just_started() -> void:
 	var thisIsFirstLap:bool = lapsCompleted == 0
 	if thisIsFirstLap or not spawnGhostsBehind:
@@ -430,6 +454,8 @@ func _on_track_lap_just_started() -> void:
 		if (spawnGhostsBehind != spawnGhostsAhead) or raceIsFinished:
 			# remove previous lap ghosts
 			var allGhosts = get_tree().get_nodes_in_group("Ghosts")
+			if allGhosts.size() > 0:
+				$WarpSound.play()
 			for ghost in allGhosts:
 				if ghost is GhostCar:
 					ghost.despawn()
@@ -441,11 +467,14 @@ func _on_track_lap_just_started() -> void:
 			
 		# make a fresh batch of ghosts
 		var ghostCount = lapStartWaypoints.size()-1 # don't count most recent start (we just started it)
+		if ghostCount > 0:
+			$WarpSound.play()
 		for i in range(ghostCount):
 			var wayPt = lapStartWaypoints[i]
 			spawnGhostCar(wayPt)
 	else:
 		# just add one more
+		$WarpSound.play()
 		spawnGhostCar()
 
 func playARandomCheerSound()->void:
@@ -459,3 +488,7 @@ func playARandomCheerSound()->void:
 			$CheerSound2.play()
 		_:
 			$CheerSound0.play()
+
+
+func _on_winner_dialog_new_game_signal() -> void:
+	restartGame(true)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://jkq2n2xu6tq"]
+[gd_scene load_steps=23 format=3 uid="uid://jkq2n2xu6tq"]
 
 [ext_resource type="Script" uid="uid://cmsmmpvnl3qts" path="res://mainGame/game.gd" id="1_o6bt6"]
 [ext_resource type="PackedScene" uid="uid://c63ijka05dwmn" path="res://car/car.tscn" id="2_38t2v"]
@@ -11,6 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://c702salwdox34" path="res://mainGame/Ready.wav" id="6_53jny"]
 [ext_resource type="PackedScene" uid="uid://p7hf0mywirjq" path="res://celebration/Firework.tscn" id="6_h25en"]
 [ext_resource type="PackedScene" uid="uid://d3ui1j5h76sgu" path="res://dialog/Instructions.tscn" id="7_ntmy5"]
+[ext_resource type="PackedScene" uid="uid://0061s53l5fbr" path="res://dialog/WinnerDialog.tscn" id="11_584pb"]
 [ext_resource type="AudioStream" uid="uid://ctlkvty0pldwr" path="res://mainGame/80s Circuit City Main.wav" id="11_umea6"]
 [ext_resource type="PackedScene" uid="uid://c71jllfvq6it7" path="res://dialog/LapCounter.tscn" id="12_ao08j"]
 [ext_resource type="AudioStream" uid="uid://bhgaw7fn6wom7" path="res://mainGame/80s Soiree Main.wav" id="12_hripa"]
@@ -18,6 +19,7 @@
 [ext_resource type="AudioStream" uid="uid://cjdejj1evj7l8" path="res://mainGame/Cheering.wav" id="15_p5usv"]
 [ext_resource type="AudioStream" uid="uid://ble4x3p51sp6t" path="res://mainGame/Cheering2.wav" id="16_ao08j"]
 [ext_resource type="AudioStream" uid="uid://cct2w5vpmt80j" path="res://mainGame/Cheering3.wav" id="17_584pb"]
+[ext_resource type="AudioStream" uid="uid://rwvsk7or21r4" path="res://car/WarpIn.wav" id="20_usiym"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ao08j"]
 font_size = 24
@@ -136,7 +138,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 4
-text = "A Drive Through The Loop"
+text = "Race 1: A Drive Through The Loop"
 label_settings = SubResource("LabelSettings_ao08j")
 horizontal_alignment = 1
 
@@ -169,6 +171,11 @@ visible = false
 layout_mode = 2
 
 [node name="RaceFinishedDialog" parent="UI/CenterContainer" instance=ExtResource("5_p1h4l")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="WinnerDialog" parent="UI/CenterContainer" instance=ExtResource("11_584pb")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -225,6 +232,11 @@ process_mode = 3
 stream = ExtResource("16_ao08j")
 bus = &"Effects"
 
+[node name="WarpSound" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("20_usiym")
+bus = &"Effects"
+
 [connection signal="lapAlmostCompleteSignal" from="BasicTrack" to="." method="_on_track_lap_almost_complete_signal"]
 [connection signal="lapCompleteSignal" from="BasicTrack" to="." method="_on_track_lap_complete_signal"]
 [connection signal="lapJustStarted" from="BasicTrack" to="." method="_on_track_lap_just_started"]
@@ -243,6 +255,7 @@ bus = &"Effects"
 [connection signal="timeout" from="FireworkTimer3" to="." method="_on_firework_timer_3_timeout"]
 [connection signal="restartGameSignal" from="UI/CenterContainer/GameOverDialog" to="." method="_on_game_over_dialog_restart_game_signal"]
 [connection signal="nextRaceSignal" from="UI/CenterContainer/RaceFinishedDialog" to="." method="_on_race_finished_dialog_next_race_signal"]
+[connection signal="newGameSignal" from="UI/CenterContainer/WinnerDialog" to="." method="_on_winner_dialog_new_game_signal"]
 [connection signal="finished" from="SoundTrack0" to="." method="_on_sound_track_finished"]
 [connection signal="finished" from="SoundTrack1" to="." method="_on_sound_track_finished"]
 [connection signal="finished" from="SoundTrack2" to="." method="_on_sound_track_finished"]

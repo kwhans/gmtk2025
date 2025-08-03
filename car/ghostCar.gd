@@ -10,7 +10,7 @@ var speed:float = 0.0
 
 func _ready() -> void:
 	millisAtStart = Time.get_ticks_msec()
-	$WarpSound.play()
+	#$WarpSound.play() # moved to game so that we don't have a bunch of simultaneous sounds causing distortion
 		
 func _physics_process(delta: float) -> void:
 	if nextWaypoint == null:
@@ -48,7 +48,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	
 func despawn()->void:
-	$WarpSound.play()
+	#$WarpSound.play()
 	$AnimationPlayer.play("despawn")
 	
 func onDespawnComplete()->void:

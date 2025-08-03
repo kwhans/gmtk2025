@@ -1,0 +1,119 @@
+[gd_scene load_steps=6 format=3 uid="uid://0061s53l5fbr"]
+
+[ext_resource type="Script" uid="uid://cdnfnqvx5wayw" path="res://dialog/winner_dialog.gd" id="1_t8mv3"]
+[ext_resource type="Texture2D" uid="uid://c3wcsnqwvjr5x" path="res://dialog/green_panel.png" id="2_jsv0i"]
+[ext_resource type="PackedScene" uid="uid://ck76wxgguukbg" path="res://dialog/CreditsDialog.tscn" id="3_jsv0i"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_84yht"]
+font_size = 64
+font_color = Color(0.122252, 0.122252, 0.122252, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_7t316"]
+font_size = 32
+font_color = Color(0.205117, 0.205117, 0.205117, 1)
+
+[node name="WinnerDialog" type="Control"]
+process_mode = 3
+z_index = 10
+z_as_relative = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_t8mv3")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="NinePatchRect" type="NinePatchRect" parent="CenterContainer/PanelContainer"]
+custom_minimum_size = Vector2(800, 500)
+layout_mode = 2
+texture = ExtResource("2_jsv0i")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="GameOverLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "You win!"
+label_settings = SubResource("LabelSettings_84yht")
+horizontal_alignment = 1
+
+[node name="TotalTimeLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "You survived your own driving."
+label_settings = SubResource("LabelSettings_7t316")
+horizontal_alignment = 1
+
+[node name="BestLapLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Thanks for playing!"
+label_settings = SubResource("LabelSettings_7t316")
+horizontal_alignment = 1
+
+[node name="WorstLapLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+label_settings = SubResource("LabelSettings_7t316")
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="NextRaceButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Play Again"
+
+[node name="CreditsButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Credits"
+
+[node name="CreditsDialog" parent="CenterContainer" instance=ExtResource("3_jsv0i")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/NextRaceButton" to="." method="_on_next_race_button_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
