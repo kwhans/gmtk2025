@@ -11,9 +11,11 @@ config_version=5
 [application]
 
 config/name="Driver In The Loop"
+config/description="Survive a race while caught in a time loop.  Don't crash into past versions of yourself."
+config/version="1.0"
 run/main_scene="uid://jkq2n2xu6tq"
 config/features=PackedStringArray("4.4", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="uid://bvklkkqa5gpq1"
 
 [global_group]
 
