@@ -388,7 +388,7 @@ func switchTracks():
 	match currentTrack:
 		0:
 			%LevelNameLabel.text = "Race 1: A Drive Through The Loop"
-			$Car.lapAcceleration = 0.12
+			$Car.lapAcceleration = 0.01
 			totalLapsToWin = 8
 			spawnGhostsAhead = true
 			spawnGhostsBehind = false
@@ -399,7 +399,7 @@ func switchTracks():
 			$BowTieTrack.process_mode = Node.PROCESS_MODE_DISABLED
 		1:
 			%LevelNameLabel.text = "Race 2: Stay Out Of The Passing Lane"
-			$Car.lapAcceleration = -0.1
+			$Car.lapAcceleration = -0.01
 			totalLapsToWin = 8
 			spawnGhostsAhead = false
 			spawnGhostsBehind = true
@@ -432,7 +432,7 @@ func switchTracks():
 			$BasicTrack.process_mode = Node.PROCESS_MODE_DISABLED
 		_:
 			%LevelNameLabel.text = "Race 1: A Drive Through The Loop"
-			$Car.lapAcceleration = 0.12
+			$Car.lapAcceleration = 0.01
 			totalLapsToWin = 8
 			spawnGhostsAhead = true
 			spawnGhostsBehind = false

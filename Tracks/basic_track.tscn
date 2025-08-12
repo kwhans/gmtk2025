@@ -46,7 +46,7 @@ tile_set = SubResource("TileSet_r3vv3")
 collision_layer = 64
 
 [node name="MarkCollider1" type="CollisionShape2D" parent="LoopMarker1"]
-position = Vector2(2072, 800)
+position = Vector2(2290, 800)
 shape = SubResource("RectangleShape2D_rxlrt")
 
 [node name="LoopMarker2" type="Area2D" parent="."]
@@ -67,7 +67,7 @@ shape = SubResource("RectangleShape2D_r3vv3")
 collision_layer = 64
 
 [node name="AlmostFinishedCollider" type="CollisionShape2D" parent="LoopMarker4AlmostFinished"]
-position = Vector2(1144, 809.5)
+position = Vector2(900, 809.5)
 shape = SubResource("RectangleShape2D_yfhpb")
 
 [node name="LoopMarker5Finish" type="Area2D" parent="."]

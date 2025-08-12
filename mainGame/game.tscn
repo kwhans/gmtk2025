@@ -39,14 +39,13 @@ visible = false
 
 [node name="Car" parent="." instance=ExtResource("2_38t2v")]
 position = Vector2(1337, 831)
+lapAcceleration = 0.01
 
 [node name="CameraOffset" type="Node2D" parent="Car"]
-position = Vector2(400, 0)
 
 [node name="Camera2D" type="Camera2D" parent="Car/CameraOffset"]
 process_mode = 3
 rotation = 1.5708
-ignore_rotation = false
 zoom = Vector2(0.4, 0.4)
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
